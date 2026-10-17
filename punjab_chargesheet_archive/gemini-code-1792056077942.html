@@ -1,0 +1,3087 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AAP Da Paap Patra (ਆਪ ਦਾ ਪਾਪ ਪੱਤਰ) — Digital Investigative Chargesheet</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lenis Smooth Inertial Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <!-- GSAP 3.12 & Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&family=Noto+Sans+Gurmukhi:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800;900&family=Cinzel:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#050508',
+            graphite: '#0b0b12',
+            charcoal: '#11111a',
+            slateDark: '#181824',
+            panelBorder: '#232336',
+            crimson: '#e11d48',
+            crimsonBright: '#ff1d48',
+            crimsonGlow: 'rgba(225, 29, 72, 0.45)',
+            amberAlert: '#f59e0b',
+            cyanGlow: '#06b6d4',
+            dossierPaper: '#fbf8f0',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans Gurmukhi"', 'sans-serif'],
+            display: ['"Syne"', '"Noto Sans Gurmukhi"', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            cinzel: ['"Cinzel"', 'serif'],
+            gurmukhi: ['"Noto Sans Gurmukhi"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --crimson: #e11d48;
+      --crimsonBright: #ff1d48;
+      --obsidian: #050508;
+    }
+
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      overflow-x: clip;
+      max-width: 100vw;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050508;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Gurmukhi', sans-serif;
+      position: relative;
+    }
+
+    /* Cinematic Film Grain Overlay */
+    .film-grain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Ambient Floating Particle Canvas */
+    #particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Ambient Radial Flashlight Cursor Glow */
+    .spotlight-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 3;
+      background: radial-gradient(circle 500px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(225, 29, 72, 0.065), transparent 80%);
+      transition: background 0.08s ease;
+    }
+
+    /* Subtle Architectural Grid */
+    .bg-forensic-grid {
+      background-size: 48px 48px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    /* High-End Glassmorphism Card 2.0 */
+    .glass-card {
+      background: rgba(17, 17, 26, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(225, 29, 72, 0.4);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(225, 29, 72, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Newspaper Clipping Physical Cutout */
+    .news-cutout {
+      background-color: #f6f3eb;
+      color: #1a1a1a;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 2px 5px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .news-cutout:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(225, 29, 72, 0.2);
+    }
+    .tape-corner {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.45);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      border: 1px dashed rgba(200, 200, 200, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 10;
+    }
+
+    /* Rubber Evidence Stamp */
+    .evidence-stamp {
+      border: 2px solid #e11d48;
+      color: #ff2a4b;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      padding: 0.2rem 0.65rem;
+      transform: rotate(-2deg);
+      display: inline-block;
+      box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.4), 0 0 20px rgba(225, 29, 72, 0.2);
+      background: rgba(225, 29, 72, 0.08);
+      user-select: none;
+    }
+
+    .citizen-stamp {
+      border: 2px solid #06b6d4;
+      color: #06b6d4;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      padding: 0.2rem 0.65rem;
+      transform: rotate(1.5deg);
+      display: inline-block;
+      box-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.4), 0 0 20px rgba(6, 182, 212, 0.2);
+      background: rgba(6, 182, 212, 0.08);
+      user-select: none;
+    }
+
+    /* Redacted Classified Text Effect */
+    .redacted {
+      background: #1c1c28;
+      color: transparent;
+      border-radius: 4px;
+      padding: 1px 8px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      border-bottom: 2px dashed #e11d48;
+      user-select: none;
+      display: inline-block;
+    }
+    .redacted:hover, .declassified .redacted, .redacted.revealed {
+      background: rgba(225, 29, 72, 0.25);
+      color: #ffffff;
+      border-bottom-color: #22c55e;
+      user-select: text;
+    }
+
+    /* 3D Map Perspective Stage */
+    .map-3d-stage {
+      perspective: 1400px;
+      overflow: hidden;
+      contain: paint;
+      width: 100%;
+    }
+    .map-3d-plane {
+      transform: rotateX(16deg) rotateZ(-1.5deg);
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 25px rgba(225, 29, 72, 0.2));
+    }
+    .map-3d-stage:hover .map-3d-plane {
+      transform: rotateX(8deg) rotateZ(-0.5deg) scale(1.02);
+    }
+    @media (max-width: 1023px) {
+      .map-3d-plane {
+        transform: none !important;
+        filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.8)) !important;
+      }
+    }
+
+    /* Radar Hotspot Animation */
+    @keyframes pulseRing {
+      0% { transform: scale(0.6); opacity: 0.95; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+    .hotspot-ring {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulseRing 2.2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* Marquee */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: inline-flex;
+      animation: marquee 40s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    /* Drag & Drop Upload Zone */
+    .dropzone-active {
+      border-color: #e11d48 !important;
+      background-color: rgba(225, 29, 72, 0.08) !important;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #050508; }
+    ::-webkit-scrollbar-thumb { background: #262638; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+
+    /* Print Styles */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      header, nav, #tickerBar, #particleCanvas, .spotlight-glow, .film-grain, button, .no-print { display: none !important; }
+      section { page-break-inside: avoid; border-color: #999 !important; }
+      .glass-card, .bg-charcoal, .bg-slateDark { background: #fff !important; color: #000 !important; border-color: #ccc !important; }
+      .text-white, .text-slate-200, .text-slate-300 { color: #111 !important; }
+      .evidence-stamp, .citizen-stamp { border-color: #000 !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-slate-100 antialiased selection:bg-crimson selection:text-white bg-forensic-grid relative w-full overflow-x-hidden">
+
+  <!-- CINEMATIC INVESTIGATIVE PRELOADER -->
+  <div id="investigativePreloader" class="fixed inset-0 z-50 bg-[#030305] flex flex-col items-center justify-center p-6 transition-all duration-700">
+    <div class="max-w-md w-full space-y-6">
+      <!-- Stamp & Decryption Badge -->
+      <div class="flex items-center justify-between border-b border-panelBorder/80 pb-3">
+        <div class="flex items-center gap-2 text-xs font-mono font-bold text-crimson">
+          <span class="w-2.5 h-2.5 rounded-full bg-crimson animate-ping"></span>
+          <span>SECURE PROTOCOL INITIALIZED</span>
+        </div>
+        <span class="text-[10px] font-mono text-slate-500">DOSSIER REF: PB-2022-2026</span>
+      </div>
+
+      <!-- Terminal Output Window -->
+      <div class="bg-charcoal/90 rounded-xl border border-panelBorder p-4 font-mono text-xs space-y-2 shadow-2xl">
+        <div class="text-slate-400 flex items-center gap-2">
+          <span class="text-crimson">&gt;</span> <span id="preloaderLine1">ESTABLISHING ENCRYPTED CITIZEN ARCHIVE...</span>
+        </div>
+        <div class="text-slate-400 flex items-center gap-2" id="preloaderLine2">
+          <span class="text-crimson">&gt;</span> <span>CORROBORATING 51,516 NDPS FIRS &amp; 1.40L CRIMES...</span>
+        </div>
+        <div class="text-slate-400 flex items-center gap-2" id="preloaderLine3">
+          <span class="text-crimson">&gt;</span> <span>AUDITING ₹4.47L CR DEBT SURGE &amp; GMADA SCAMS...</span>
+        </div>
+        <div class="text-green-400 font-bold flex items-center gap-2" id="preloaderLine4">
+          <span class="text-green-400">&gt;</span> <span>STATUS: [ACCESS GRANTED // CHARGESHEET DECLASSIFIED]</span>
+        </div>
+      </div>
+
+      <!-- Progress Meter -->
+      <div class="space-y-2">
+        <div class="flex justify-between text-[11px] font-mono text-slate-400">
+          <span>DECRYPTING EVIDENCE VAULT</span>
+          <span id="preloaderPercent" class="text-crimson font-bold">100%</span>
+        </div>
+        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div id="preloaderBar" class="h-full bg-gradient-to-r from-red-700 via-crimson to-crimsonBright w-full transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <div class="text-center pt-2">
+        <button onclick="dismissPreloader()" class="text-[11px] font-mono text-slate-500 hover:text-slate-300 underline tracking-wider">
+          [ENTER INVESTIGATIVE CHARGESHEET]
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grain & Canvas Visual Atmosphere -->
+  <div class="film-grain"></div>
+  <canvas id="particleCanvas"></canvas>
+  <div class="spotlight-glow" id="spotlightGlow"></div>
+
+  <!-- TOP LIVE FORENSIC TICKER -->
+  <div id="tickerBar" class="bg-gradient-to-r from-red-950 via-crimson to-red-950 text-white font-mono text-xs py-2 px-4 border-b border-red-500/40 sticky top-0 z-50 shadow-2xl overflow-hidden no-print w-full">
+    <div class="flex items-center">
+      <div class="flex items-center gap-2 pr-4 bg-red-950/90 font-bold tracking-wider uppercase text-[11px] sm:text-xs z-10 shrink-0 border-r border-red-400/40">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+        <span data-i18n="tickerLabel">INVESTIGATIVE CHARGESHEET ARCHIVE // DOSSIER REF: PB-2022-2026</span>
+      </div>
+      <div class="overflow-hidden whitespace-nowrap w-full">
+        <div class="animate-marquee flex items-center gap-8 text-[11px] font-medium tracking-wide">
+          <span class="flex items-center gap-2 font-bold text-white">🚨 51,516 NDPS FIRs (ਮਾਰਚ 2025–ਜੁਲਾਈ 2026)</span>
+          <span class="text-red-300">•</span>
+          <span>⚠️ 1,40,000+ ਕੁੱਲ ਅਪਰਾਧ (2,100+ ਕਤਲ 3 ਸਾਲਾਂ ਵਿੱਚ)</span>
+          <span class="text-red-300">•</span>
+          <span>📉 ₹4.47 ਲੱਖ ਕਰੋੜ ਅਨੁਮਾਨਿਤ ਕਰਜ਼ਾ (ਮਾਰਚ 2027 ਤੱਕ)</span>
+          <span class="text-red-300">•</span>
+          <span>💥 22 ਪੁਲਿਸ ਥਾਣਿਆਂ 'ਤੇ ਆਰਪੀਜੀ ਤੇ ਗ੍ਰਨੇਡ ਹਮਲੇ (ਮੁਹਾਲੀ ਇੰਟੈਲੀਜੈਂਸ ਹੈੱਡਕੁਆਰਟਰ ਸਮੇਤ)</span>
+          <span class="text-red-300">•</span>
+          <span>⚖️ 25 ਲੱਖ ਨੌਕਰੀਆਂ ਦੇ ਵਾਅਦੇ ਵਿੱਚੋਂ ਸਿਰਫ਼ 2.45% ਡਿਲੀਵਰ (61,281)</span>
+          <span class="text-red-300">•</span>
+          <span>🏥 16,000 ਮੁਹੱਲਾ ਕਲੀਨਿਕਾਂ ਤੋਂ ਘਟਾ ਕੇ ਸਿਰਫ਼ 1,432 (91% ਕਟੌਤੀ)</span>
+          <span class="text-red-300">•</span>
+          <span>🌾 ਮੂੰਗੀ ਦੀ MSP 'ਤੇ 0 MT ਖਰੀਦ (ਕਿਸਾਨਾਂ ਨੂੰ ₹14–20 ਕਰੋੜ ਦਾ ਨੁਕਸਾਨ)</span>
+          <span class="text-red-300">•</span>
+          <span>🏛️ ਸੀਐਮ ਕੈਂਪ ਆਫਿਸ 'ਤੇ ਸੀਬੀਆਈ ਛਾਪੇ (ਓਐਸਡੀ ਰਾਜਬੀਰ ਘੁਮਣ ਮਾਮਲਾ)</span>
+          <span class="text-red-300">•</span>
+          <span>🏢 ₹10,000 ਕਰੋੜ ਗਮਾਡਾ ਜ਼ਮੀਨ ਨਿਲਾਮੀ ਘੁਟਾਲਾ</span>
+          <span class="text-red-300">•</span>
+          <span>🛑 90,248 ਮ੍ਰਿਤਕ ਪੈਨਸ਼ਨਰਾਂ ਦੇ ਨਾਂ 'ਤੇ ਕਰੋੜਾਂ ਦਾ ਘਪਲਾ</span>
+
+          <!-- Seamless Duplicate Loop -->
+          <span class="text-red-300">•</span>
+          <span class="flex items-center gap-2 font-bold text-white">🚨 51,516 NDPS FIRs (ਮਾਰਚ 2025–ਜੁਲਾਈ 2026)</span>
+          <span class="text-red-300">•</span>
+          <span>⚠️ 1,40,000+ ਕੁੱਲ ਅਪਰਾਧ (2,100+ ਕਤਲ 3 ਸਾਲਾਂ ਵਿੱਚ)</span>
+          <span class="text-red-300">•</span>
+          <span>📉 ₹4.47 ਲੱਖ ਕਰੋੜ ਅਨੁਮਾਨਿਤ ਕਰਜ਼ਾ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION HEADER -->
+  <header class="border-b border-panelBorder/70 bg-obsidian/95 backdrop-blur-2xl sticky top-8 z-40 shadow-xl transition-all w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4 w-full min-w-0">
+      
+      <!-- Logo Branding -->
+      <a href="#home" class="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-crimson to-red-950 flex items-center justify-center text-white font-mono font-black text-lg sm:text-xl shadow-lg shadow-crimson/30 group-hover:scale-105 transition shrink-0">
+          P
+        </div>
+        <div class="min-w-0">
+          <div class="font-display font-black text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5 sm:gap-2 truncate">
+            <span>AAP DA PAAP PATRA</span>
+            <span class="hidden lg:inline text-[10px] font-mono text-crimson px-2 py-0.5 bg-crimson/10 border border-crimson/30 rounded-full font-bold">ਆਪ ਦਾ ਪਾਪ ਪੱਤਰ</span>
+          </div>
+          <p class="text-[9px] sm:text-[10px] font-mono text-slate-400 tracking-wider truncate">DIGITAL INVESTIGATIVE CHARGESHEET</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav (Visible on XL screens >= 1280px to prevent any right-edge cut) -->
+      <nav class="hidden xl:flex items-center gap-5 text-xs font-mono font-medium text-slate-300 shrink-0">
+        <a href="#chargesheets" class="hover:text-crimson transition">Chargesheets</a>
+        <a href="#crime-map" class="hover:text-crimson transition">Crime Map</a>
+        <a href="#issues-detail" class="hover:text-crimson transition">Issues in Detail</a>
+        <a href="#evidence-room" class="hover:text-crimson transition">Evidence Room</a>
+        <a href="#submit-story" class="hover:text-cyanGlow transition font-bold text-cyan-400 flex items-center gap-1">
+          <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+          <span>Submit Story</span>
+        </a>
+        <a href="#promise-vs-reality" class="hover:text-crimson transition">Promise vs Reality</a>
+        <a href="#downloads" class="hover:text-crimson transition">Downloads</a>
+      </nav>
+
+      <!-- Utilities -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <!-- Sound FX Toggle -->
+        <button onclick="toggleAudio()" id="soundBtn" class="p-2 rounded-lg bg-slateDark border border-slate-700 text-slate-400 hover:text-white transition" title="Sound Effects">
+          <i data-lucide="volume-2" id="soundIcon" class="w-4 h-4 text-slate-300"></i>
+        </button>
+
+        <!-- Redacted Declassify Toggle -->
+        <button onclick="toggleDeclassify()" id="declassifyBtn" class="px-2.5 py-1.5 text-xs font-mono rounded-lg bg-slateDark border border-slate-700 hover:border-crimson text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Reveal Redacted Classified Facts">
+          <i data-lucide="eye" class="w-3.5 h-3.5 text-crimson"></i>
+          <span class="hidden lg:inline" id="declassifyText">Declassify</span>
+        </button>
+
+        <!-- Language Switcher -->
+        <div class="flex items-center bg-slateDark border border-slate-700 rounded-lg p-0.5 text-xs font-mono">
+          <button onclick="setLanguage('en')" id="lang-en" class="px-2 py-1 rounded bg-crimson text-white font-bold transition">EN</button>
+          <button onclick="setLanguage('pa')" id="lang-pa" class="px-2 py-1 rounded text-slate-400 hover:text-white transition">ਪੰ</button>
+          <button onclick="setLanguage('hi')" id="lang-hi" class="px-2 py-1 rounded text-slate-400 hover:text-white transition">हिं</button>
+        </div>
+
+        <!-- Print Button (Visible on wide screens) -->
+        <button onclick="window.print()" class="hidden 2xl:flex px-3 py-1.5 rounded-lg bg-crimson hover:bg-crimsonBright text-white font-mono text-xs font-bold transition items-center gap-1.5 shadow-md">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+          <span>Print</span>
+        </button>
+
+        <!-- Mobile / Tablet Hamburger Toggle Button -->
+        <button onclick="toggleMobileNav()" id="mobileMenuBtn" class="xl:hidden p-2 rounded-lg bg-slateDark border border-slate-700 text-slate-300 hover:text-white transition" aria-label="Toggle Navigation Menu">
+          <i data-lucide="menu" id="mobileMenuIcon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Responsive Mobile / Tablet Navigation Drawer -->
+    <div id="mobileNavDrawer" class="hidden xl:hidden border-t border-panelBorder bg-obsidian/98 backdrop-blur-2xl px-4 sm:px-6 py-4 space-y-3 font-mono text-xs shadow-2xl">
+      <div class="grid grid-cols-2 gap-2 pb-3 border-b border-panelBorder/70">
+        <a href="#chargesheets" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 text-crimson"></i> Chargesheets
+        </a>
+        <a href="#crime-map" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-crimson"></i> Crime Map
+        </a>
+        <a href="#issues-detail" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="alert-octagon" class="w-3.5 h-3.5 text-crimson"></i> Issues in Detail
+        </a>
+        <a href="#evidence-room" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="newspaper" class="w-3.5 h-3.5 text-crimson"></i> Evidence Room
+        </a>
+        <a href="#submit-story" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-bold flex items-center gap-2 col-span-2">
+          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Submit Whistleblower Story
+        </a>
+        <a href="#promise-vs-reality" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="scale" class="w-3.5 h-3.5 text-amberAlert"></i> Promise vs Reality
+        </a>
+        <a href="#downloads" onclick="toggleMobileNav()" class="p-2.5 rounded-lg bg-charcoal hover:bg-slateDark text-slate-300 hover:text-white flex items-center gap-2">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-slate-400"></i> Downloads
+        </a>
+      </div>
+      <div class="flex items-center justify-between pt-1 text-[11px] text-slate-400">
+        <span>STATUS: ACTIVE INVESTIGATION</span>
+        <button onclick="window.print()" class="text-crimson font-bold flex items-center gap-1">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Full Chargesheet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-24 sm:space-y-32 w-full overflow-hidden">
+
+    <!-- SECTION 1: CINEMATIC HERO (BALANCED TYPOGRAPHY & MICRO-INTERACTIONS) -->
+    <section id="home" class="relative pt-8 pb-14 overflow-hidden rounded-3xl border border-panelBorder/90 glass-card">
+      <!-- Background Graphic with Subtle Parallax -->
+      <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+        <img src="img/hero_banner_bg.jpg" alt="Punjab Chargesheet Background" class="w-full h-full object-cover object-center filter saturate-150 contrast-125 scale-105" />
+        <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-graphite/90 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-obsidian via-transparent to-obsidian"></div>
+      </div>
+
+      <div class="relative z-10 px-5 sm:px-10 lg:px-12 py-6 space-y-8 max-w-5xl">
+        
+        <!-- Badges Bar -->
+        <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <span class="evidence-stamp">OFFICIAL CHARGESHEET</span>
+          <span class="text-xs font-mono text-slate-400 px-3 py-1 rounded-full bg-slateDark border border-panelBorder flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-crimson animate-ping"></span>
+            <span>CASE REF: AAP-PB-GOV-2022-26</span>
+          </span>
+          <span class="text-xs font-mono text-cyan-400 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30">
+            CITIZEN WHISTLEBLOWER VERIFIED
+          </span>
+        </div>
+
+        <!-- Main Title & Tagline -->
+        <div class="space-y-3">
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-display font-black tracking-tight text-white leading-tight">
+            <span class="block bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">AAP DA PAAP PATRA</span>
+            <span class="block text-xl sm:text-3xl font-mono text-crimson font-bold mt-1">ਆਪ ਦਾ ਪਾਪ ਪੱਤਰ</span>
+            <span class="block font-serif italic text-crimsonBright font-normal text-2xl sm:text-4xl lg:text-4xl mt-3 leading-relaxed" data-i18n="heroTagline">
+              “ਵਾਅਦਿਆਂ ਤੋਂ ਹਕੀਕਤ ਤੱਕ” — From Promises to Reality
+            </span>
+          </h1>
+
+          <p class="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed pt-1" data-i18n="heroDesc">
+            A forensic investigative chargesheet documenting four years of administrative collapse, catastrophic drug overdose deaths, unfulfilled public guarantees, extortion syndicates, and institutional corruption under the AAP government in Punjab.
+          </p>
+        </div>
+
+        <!-- Live Financial & Human Cost Telemetry HUD -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-charcoal/90 border border-panelBorder/90 backdrop-blur-xl shadow-2xl space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-panelBorder/60 pb-2 text-[11px] font-mono text-slate-400">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              <span class="font-bold text-red-400">LIVE STATE DEBT SURGE CLOCK</span>
+            </div>
+            <span class="text-slate-400 font-mono">REAL-TIME ACCRUAL: +₹847 / SEC</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+            <div class="space-y-1">
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">ESTIMATED PUNJAB PUBLIC DEBT</span>
+              <div class="text-2xl sm:text-3xl font-mono font-black text-crimson flex items-baseline gap-1" id="liveDebtDisplay">
+                ₹4,47,189.42 Cr
+              </div>
+              <p class="text-[10px] text-slate-400 font-mono">Surging from ₹2.83L Cr (2022) to ₹4.47L Cr (2027)</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">GUARANTEES FULFILLED (JOBS)</span>
+              <div class="text-2xl sm:text-3xl font-display font-black text-amberAlert">
+                2.45%
+              </div>
+              <p class="text-[10px] text-slate-400 font-mono">61,281 delivered of 25 Lakh promised</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">REPORTED NDPS NARCOTICS CASES</span>
+              <div class="text-2xl sm:text-3xl font-mono font-black text-cyan-400">
+                51,516
+              </div>
+              <p class="text-[10px] text-slate-400 font-mono">Highest overdose fatalities in India (2 yrs running)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call To Action Row -->
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <a href="#chargesheets" class="px-5 py-3 rounded-xl bg-crimson hover:bg-crimsonBright text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl shadow-crimson/30 transition transform hover:-translate-y-0.5">
+            <i data-lucide="folder-search" class="w-4 h-4"></i>
+            <span data-i18n="exploreBtn">Explore 4 Dossiers</span>
+          </a>
+          <a href="#crime-map" class="px-5 py-3 rounded-xl bg-slateDark hover:bg-slate-800 border border-panelBorder hover:border-crimson text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition">
+            <i data-lucide="crosshair" class="w-4 h-4 text-crimson"></i>
+            <span data-i18n="trackerBtn">3D Crime Tracker</span>
+          </a>
+          <a href="#submit-story" class="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-900/60 to-cyan-950 border border-cyan-500/50 hover:border-cyan-400 text-cyan-200 hover:text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-cyan-950/40 transition">
+            <i data-lucide="upload-cloud" class="w-4 h-4 text-cyan-400"></i>
+            <span>Submit Your Evidence</span>
+          </a>
+          <a href="#downloads" class="px-4 py-3 rounded-xl bg-transparent hover:bg-white/5 border border-dashed border-slate-600 text-slate-300 font-mono text-xs flex items-center gap-2 transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Download Dossier</span>
+          </a>
+        </div>
+
+        <!-- Quick Jump Tactical Dossier Dock -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-panelBorder/70">
+          <span class="text-xs font-mono text-slate-400 font-bold uppercase tracking-wider pr-1">Jump to File:</span>
+          <a href="#chargesheets" class="px-2.5 py-1 rounded-lg bg-slateDark hover:bg-crimson/20 border border-panelBorder hover:border-crimson text-slate-300 hover:text-white text-xs font-mono transition flex items-center gap-1.5">
+            <span class="text-crimson font-bold">01</span> Drugs
+          </a>
+          <a href="#crime-map" class="px-2.5 py-1 rounded-lg bg-slateDark hover:bg-crimson/20 border border-panelBorder hover:border-crimson text-slate-300 hover:text-white text-xs font-mono transition flex items-center gap-1.5">
+            <span class="text-crimson font-bold">02</span> Crime Map
+          </a>
+          <a href="#issues-detail" class="px-2.5 py-1 rounded-lg bg-slateDark hover:bg-crimson/20 border border-panelBorder hover:border-crimson text-slate-300 hover:text-white text-xs font-mono transition flex items-center gap-1.5">
+            <span class="text-crimson font-bold">03</span> Scams
+          </a>
+          <a href="#evidence-room" class="px-2.5 py-1 rounded-lg bg-slateDark hover:bg-crimson/20 border border-panelBorder hover:border-crimson text-slate-300 hover:text-white text-xs font-mono transition flex items-center gap-1.5">
+            <span class="text-crimson font-bold">04</span> Media Clippings
+          </a>
+          <a href="#submit-story" class="px-2.5 py-1 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-500/40 text-cyan-400 font-bold text-xs font-mono transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Submit Story
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: FOUR ISSUE-BASED CHARGESHEETS (3D DOSSIER EXPERIENCE) -->
+    <section id="chargesheets" class="space-y-8 scroll-mt-24">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+            <span>PRIMARY INDICTMENTS</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+            Four Core Issue-Based Chargesheets
+          </h2>
+          <p class="text-slate-400 text-sm max-w-2xl mt-1">
+            Dedicated investigative dossiers on Drugs, Law & Order, Vadakhilafi, and Corruption. Click "View Evidence Dossier" to trigger the 3D animated file folder experience.
+          </p>
+        </div>
+        <div class="text-right font-mono text-xs text-slate-400">
+          <span>CLASSIFIED STATUS: </span>
+          <span class="text-green-400 font-bold">PUBLICLY AUDITED</span>
+        </div>
+      </div>
+
+      <!-- 4 Dossier Cards Grid (with 3D Tilt & Parallax Imagery) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- CARD 1: DRUGS (ਨਸ਼ਾ) -->
+        <div class="group relative rounded-2xl bg-charcoal border border-panelBorder hover:border-crimson/80 p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-crimson/10 flex flex-col justify-between overflow-hidden">
+          <div class="absolute inset-0 opacity-15 pointer-events-none group-hover:opacity-25 transition-opacity">
+            <img src="img/drug_crisis_punjab.jpg" alt="Drugs Crisis" class="w-full h-full object-cover" />
+          </div>
+          <div class="absolute top-0 right-0 p-5">
+            <span class="font-mono text-xs px-2.5 py-1 bg-crimson/15 border border-crimson/40 text-crimson rounded-md font-bold">DOSSIER-01</span>
+          </div>
+          <div class="relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-crimson/15 border border-crimson/30 flex items-center justify-center text-crimson">
+              <i data-lucide="skull" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-xs font-mono text-red-400 uppercase tracking-wider">NARCOTICS CRISIS & STATE COLLUSION</span>
+              <h3 class="text-2xl font-display font-extrabold text-white mt-1">Drugs & The Chitta Epidemic</h3>
+              <p class="text-xs font-mono text-slate-400 mt-0.5">ਚਿੱਟਾ ਅਤੇ ਨਸ਼ਿਆਂ ਦੀ ਮਹਾਂਮਾਰੀ — ਜੇਲ੍ਹ ਰੈਕੇਟ ਤੇ ਅਧਿਕਾਰਤ ਮਿਲੀਭੁਗਤ</p>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Highest drug overdose deaths in India for two consecutive years. An estimated 7 lakh children aged 10 to 17 trapped. Major rackets operated directly inside Sangrur, Kapurthala, and Faridkot central prisons with police collusion.
+            </p>
+            <div class="p-3.5 rounded-xl bg-obsidian/90 border border-panelBorder/80 font-mono text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-300">
+                <span>NDPS Cases (2024):</span>
+                <span class="text-crimson font-bold">29 per lakh (2nd highest in India)</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>National Heroin Seizures:</span>
+                <span class="text-amberAlert font-bold">58% traced to Punjab (2025)</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative z-10 pt-6 mt-6 border-t border-panelBorder flex items-center justify-between">
+            <span class="text-xs font-mono text-slate-500">9 Documented Findings</span>
+            <button onclick="openDossierModal('drugs')" class="px-4 py-2.5 rounded-lg bg-crimson/20 hover:bg-crimson border border-crimson text-crimson hover:text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-md">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>View Evidence Dossier</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 2: LAW & ORDER (ਕਾਨੂੰਨ ਵਿਵਸਥਾ) -->
+        <div class="group relative rounded-2xl bg-charcoal border border-panelBorder hover:border-amber-500/80 p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between overflow-hidden">
+          <div class="absolute inset-0 opacity-15 pointer-events-none group-hover:opacity-25 transition-opacity">
+            <img src="img/law_order_collapse.jpg" alt="Law and Order Collapse" class="w-full h-full object-cover" />
+          </div>
+          <div class="absolute top-0 right-0 p-5">
+            <span class="font-mono text-xs px-2.5 py-1 bg-amber-500/15 border border-amber-500/40 text-amberAlert rounded-md font-bold">DOSSIER-02</span>
+          </div>
+          <div class="relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amberAlert">
+              <i data-lucide="flame" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-xs font-mono text-amber-400 uppercase tracking-wider">EXTORTION & SYSTEMIC VIOLENCE</span>
+              <h3 class="text-2xl font-display font-extrabold text-white mt-1">Law & Order Collapse</h3>
+              <p class="text-xs font-mono text-slate-400 mt-0.5">ਕਾਨੂੰਨ ਵਿਵਸਥਾ ਦਾ ਸੰਕਟ — ਗੈਂਗਸਟਰ ਰਾਜ, ਆਰਪੀਜੀ ਹਮਲੇ ਤੇ ਫਿਰੌਤੀਆਂ</p>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Surge from 43,000+ to 47,000+ crimes annually (1.40L+ total). RPG rocket attack on Punjab Police Intelligence HQ in Mohali. 22 police stations attacked. Unchecked extortion syndicates forcing capital flight of traders.
+            </p>
+            <div class="p-3.5 rounded-xl bg-obsidian/90 border border-panelBorder/80 font-mono text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-300">
+                <span>Crimes Against Women:</span>
+                <span class="text-crimson font-bold">16,000+ Cases (2022–2024)</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Gangster Threats Registered:</span>
+                <span class="text-amberAlert font-bold">560+ FIRs Logged</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative z-10 pt-6 mt-6 border-t border-panelBorder flex items-center justify-between">
+            <span class="text-xs font-mono text-slate-500">18 Documented Findings</span>
+            <button onclick="openDossierModal('law')" class="px-4 py-2.5 rounded-lg bg-amber-500/20 hover:bg-amber-600 border border-amber-500 text-amberAlert hover:text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-md">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>View Evidence Dossier</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: VADAKHILAFI (ਵਾਅਦਾਖਿਲਾਫ਼ੀ) -->
+        <div class="group relative rounded-2xl bg-charcoal border border-panelBorder hover:border-red-500/80 p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/10 flex flex-col justify-between overflow-hidden">
+          <div class="absolute inset-0 opacity-15 pointer-events-none group-hover:opacity-25 transition-opacity">
+            <img src="img/broken_promises.jpg" alt="Broken Promises" class="w-full h-full object-cover" />
+          </div>
+          <div class="absolute top-0 right-0 p-5">
+            <span class="font-mono text-xs px-2.5 py-1 bg-red-500/15 border border-red-500/40 text-red-400 rounded-md font-bold">DOSSIER-03</span>
+          </div>
+          <div class="relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-red-600/15 border border-red-500/30 flex items-center justify-center text-red-400">
+              <i data-lucide="file-x-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-xs font-mono text-red-400 uppercase tracking-wider">FAILED PROMISES & PUBLIC BETRAYAL</span>
+              <h3 class="text-2xl font-display font-extrabold text-white mt-1">Vadakhilafi (Broken Guarantees)</h3>
+              <p class="text-xs font-mono text-slate-400 mt-0.5">ਵਾਅਦਾਖਿਲਾਫ਼ੀ — 25 ਲੱਖ ਨੌਕਰੀਆਂ ਦਾ ਭਰਮ ਅਤੇ ਕਿਸਾਨਾਂ ਨਾਲ ਧੋਖਾ</p>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              25 lakh jobs promised, only 61,281 delivered (2.45%). Mohalla clinics scaled down 91% from 16,000 to 1,432. Zero of 16 promised medical colleges operational. 0 MT moong procured at MSP causing ₹20 Cr losses to farmers.
+            </p>
+            <div class="p-3.5 rounded-xl bg-obsidian/90 border border-panelBorder/80 font-mono text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-300">
+                <span>State Debt Surge:</span>
+                <span class="text-crimson font-bold">₹2.83L Cr → ₹4.47L Cr (2027)</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Youth Unemployment:</span>
+                <span class="text-amberAlert font-bold">20.2% (National Avg: 4.8%)</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative z-10 pt-6 mt-6 border-t border-panelBorder flex items-center justify-between">
+            <span class="text-xs font-mono text-slate-500">11 Documented Findings</span>
+            <button onclick="openDossierModal('vadakhilafi')" class="px-4 py-2.5 rounded-lg bg-red-600/20 hover:bg-red-600 border border-red-500 text-red-400 hover:text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-md">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>View Evidence Dossier</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 4: SCAMS & CORRUPTION (ਘੁਟਾਲੇ) -->
+        <div class="group relative rounded-2xl bg-charcoal border border-panelBorder hover:border-yellow-500/80 p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10 flex flex-col justify-between overflow-hidden">
+          <div class="absolute inset-0 opacity-15 pointer-events-none group-hover:opacity-25 transition-opacity">
+            <img src="img/corruption_scams.jpg" alt="Corruption Scams" class="w-full h-full object-cover" />
+          </div>
+          <div class="absolute top-0 right-0 p-5">
+            <span class="font-mono text-xs px-2.5 py-1 bg-yellow-500/15 border border-yellow-500/40 text-yellow-400 rounded-md font-bold">DOSSIER-04</span>
+          </div>
+          <div class="relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-yellow-500/15 border border-yellow-500/30 flex items-center justify-center text-yellow-400">
+              <i data-lucide="scale" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-xs font-mono text-yellow-400 uppercase tracking-wider">INSTITUTIONAL CORRUPTION & RAIDS</span>
+              <h3 class="text-2xl font-display font-extrabold text-white mt-1">Scams & Systematic Loot</h3>
+              <p class="text-xs font-mono text-slate-400 mt-0.5">ਘੁਟਾਲੇ ਅਤੇ ਭ੍ਰਿਸ਼ਟਾਚਾਰ — ਸੀਬੀਆਈ ਛਾਪੇ, ਗਮਾਡਾ ਤੇ ਸੰਨਟੈਕ ਸਿਟੀ ਜਾਂਚ</p>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              CBI raid on CM Camp Office regarding OSD Rajbir Ghuman in cash-for-postings. ₹10,000 Cr GMADA land auction rigging. ₹348 Cr Suntec City crime proceeds. ₹155 Cr bank fraud arrest of AAP leader Deepak Singla.
+            </p>
+            <div class="p-3.5 rounded-xl bg-obsidian/90 border border-panelBorder/80 font-mono text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-300">
+                <span>Liquor L-1 Cartelization:</span>
+                <span class="text-crimson font-bold">Licence ₹25L → ₹5 Cr; ₹200 Cr Scam</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Ghost Pension Beneficiaries:</span>
+                <span class="text-amberAlert font-bold">90,248 Deceased on Rolls</span>
+              </div>
+            </div>
+          </div>
+          <div class="relative z-10 pt-6 mt-6 border-t border-panelBorder flex items-center justify-between">
+            <span class="text-xs font-mono text-slate-500">16 Documented Findings</span>
+            <button onclick="openDossierModal('corruption')" class="px-4 py-2.5 rounded-lg bg-yellow-500/20 hover:bg-yellow-600 border border-yellow-500 text-yellow-400 hover:text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-md">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>View Evidence Dossier</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE 3D MAP OF PUNJAB (CRIME & CORRUPTION TRACKER) -->
+    <section id="crime-map" class="space-y-6 scroll-mt-24">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+            <i data-lucide="crosshair" class="w-4 h-4"></i>
+            <span>3D GEOSPATIAL INTELLIGENCE RADAR</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+            Interactive Punjab Crime & Corruption Tracker
+          </h2>
+          <p class="text-slate-400 text-sm max-w-3xl mt-1">
+            An interactive 3D topographical map tracking real-time law and order incidents. Select or hover over hotspots across Punjab districts to examine recent crimes, drug seizures, and administrative breaches.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <span class="text-slate-400">PROMPT: </span>
+          <span class="text-white font-bold bg-slateDark px-3 py-1.5 rounded-lg border border-panelBorder">
+            "See what crimes have been committed in Punjab in the last week"
+          </span>
+        </div>
+      </div>
+
+      <!-- Tracker Container with 3D Map & Incident Terminal -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- Left: 3D Map Plane (7 Cols) -->
+        <div class="lg:col-span-7 bg-charcoal rounded-2xl border border-panelBorder p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-panelBorder/70 pb-3 mb-4">
+            <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
+              <span class="w-2.5 h-2.5 rounded-full bg-crimson animate-ping"></span>
+              <span>TACTICAL RADAR: 31.1471° N, 75.3412° E (PUNJAB ZONE)</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <button onclick="filterMapHotspots('all')" class="map-filter-btn px-2.5 py-1 rounded bg-crimson text-white font-bold" data-cat="all">ALL</button>
+              <button onclick="filterMapHotspots('violent')" class="map-filter-btn px-2.5 py-1 rounded bg-slateDark text-slate-300 hover:text-white" data-cat="violent">ATTACKS</button>
+              <button onclick="filterMapHotspots('drugs')" class="map-filter-btn px-2.5 py-1 rounded bg-slateDark text-slate-300 hover:text-white" data-cat="drugs">DRUGS</button>
+              <button onclick="filterMapHotspots('corruption')" class="map-filter-btn px-2.5 py-1 rounded bg-slateDark text-slate-300 hover:text-white" data-cat="corruption">SCAMS</button>
+            </div>
+          </div>
+
+          <!-- 3D Perspective Stage -->
+          <div class="map-3d-stage w-full py-4 flex items-center justify-center overflow-hidden">
+            <div class="map-3d-plane relative w-full max-w-[560px] aspect-[4/3] rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-obsidian">
+              
+              <!-- Topographic Render Image -->
+              <img src="img/punjab_crime_map.jpg" alt="Punjab 3D Topographic Crime Map" class="absolute inset-0 w-full h-full object-cover object-center filter saturate-125 opacity-85" />
+              <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-transparent to-black/30"></div>
+
+              <!-- Interactive Clickable Pins Overlay (SVG layer) -->
+              <svg viewBox="0 0 500 400" class="absolute inset-0 w-full h-full z-10 cursor-pointer overflow-hidden" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="hotspotGlowCrimson" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ff1d48" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#e11d48" stop-opacity="0"/>
+                  </radialGradient>
+                  <radialGradient id="hotspotGlowAmber" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <!-- Hotspot 1: Mohali (RPG Attack) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('mohali')">
+                  <circle cx="395" cy="210" r="18" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="395" cy="210" r="6" fill="#e11d48" stroke="#fff" stroke-width="2" />
+                  <text x="325" y="235" fill="#ffffff" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Mohali (RPG Attack)</text>
+                </g>
+
+                <!-- Hotspot 2: Amritsar (ASI Shot) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('amritsar')">
+                  <circle cx="150" cy="135" r="16" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="150" cy="135" r="5" fill="#e11d48" stroke="#fff" stroke-width="2" />
+                  <text x="90" y="125" fill="#ffffff" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Amritsar (ASI Shot)</text>
+                </g>
+
+                <!-- Hotspot 3: Ludhiana (3 Murders in 48h) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('ludhiana')">
+                  <circle cx="270" cy="230" r="18" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="270" cy="230" r="6" fill="#ff2a4b" stroke="#fff" stroke-width="2" />
+                  <text x="210" y="255" fill="#ffffff" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Ludhiana (3 Murders / 48h)</text>
+                </g>
+
+                <!-- Hotspot 4: Bathinda (Village for Sale) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="drugs" onclick="selectIncident('bathinda')">
+                  <circle cx="170" cy="305" r="16" fill="url(#hotspotGlowAmber)" class="hotspot-ring" />
+                  <circle cx="170" cy="305" r="5" fill="#f59e0b" stroke="#fff" stroke-width="2" />
+                  <text x="75" y="325" fill="#f59e0b" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Bathinda (Village on Sale)</text>
+                </g>
+
+                <!-- Hotspot 5: Faridkot (Jail Racket) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="drugs" onclick="selectIncident('faridkot')">
+                  <circle cx="160" cy="240" r="14" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="160" cy="240" r="5" fill="#e11d48" stroke="#fff" stroke-width="1.5" />
+                  <text x="105" y="230" fill="#ffffff" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Faridkot Jail Ring</text>
+                </g>
+
+                <!-- Hotspot 6: Fazilka / Jalalabad (Blast) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('fazilka')">
+                  <circle cx="95" cy="280" r="14" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="95" cy="280" r="5" fill="#e11d48" stroke="#fff" stroke-width="1.5" />
+                  <text x="20" y="270" fill="#ffffff" font-size="9" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Jalalabad Blast &amp; ₹62Cr Drug</text>
+                </g>
+
+                <!-- Hotspot 7: Sangrur (DSP Jail Racket) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="drugs" onclick="selectIncident('sangrur')">
+                  <circle cx="280" cy="300" r="15" fill="url(#hotspotGlowAmber)" class="hotspot-ring" />
+                  <circle cx="280" cy="300" r="5" fill="#f59e0b" stroke="#fff" stroke-width="2" />
+                  <text x="285" y="315" fill="#f59e0b" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Sangrur Jail (DSP Syndicate)</text>
+                </g>
+
+                <!-- Hotspot 8: Jalandhar (Extortion Murder) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('jalandhar')">
+                  <circle cx="230" cy="170" r="15" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="230" cy="170" r="5" fill="#e11d48" stroke="#fff" stroke-width="2" />
+                  <text x="240" y="170" fill="#ffffff" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Jalandhar (Extortion Slaying)</text>
+                </g>
+
+                <!-- Hotspot 9: Mansa (Sidhu Moosewala) -->
+                <g class="hotspot-pin cursor-pointer" data-cat="violent" onclick="selectIncident('mansa')">
+                  <circle cx="230" cy="345" r="16" fill="url(#hotspotGlowCrimson)" class="hotspot-ring" />
+                  <circle cx="230" cy="345" r="5" fill="#ff1d48" stroke="#fff" stroke-width="2" />
+                  <text x="240" y="355" fill="#ffffff" font-size="10" font-family="'JetBrains Mono', monospace" font-weight="bold" filter="drop-shadow(0 2px 4px #000)">Mansa (Moosewala Assassination)</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="mt-2 flex items-center justify-between text-slate-400 font-mono text-[11px] pt-3 border-t border-panelBorder">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-crimson"></span> Terror / Police Attacks</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amberAlert"></span> Prison Drug Cartels</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> Public Protests</span>
+          </div>
+        </div>
+
+        <!-- Right: Live Tactical Incident Terminal (5 Cols) -->
+        <div class="lg:col-span-5 bg-charcoal rounded-2xl border border-panelBorder p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between border-b border-panelBorder pb-3">
+              <span class="text-xs font-mono text-crimson font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span id="incidentBadge">INCIDENT DOSSIER</span>
+              </span>
+              <span id="incidentDate" class="font-mono text-xs text-slate-400">TACTICAL WARHEAD STRIKE</span>
+            </div>
+
+            <div class="mt-4 space-y-4">
+              <div>
+                <span id="incidentDistrict" class="text-xs font-mono px-2 py-0.5 rounded bg-slateDark border border-slate-700 text-slate-300">SAS Nagar / Mohali</span>
+                <h3 id="incidentTitle" class="text-2xl font-display font-extrabold text-white mt-1.5">
+                  RPG Attack on Punjab Police Intelligence HQ
+                </h3>
+              </div>
+
+              <!-- Metrics Readout Table -->
+              <div class="p-4 rounded-xl bg-obsidian border border-panelBorder/90 font-mono text-xs space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Target:</span>
+                  <span id="incidentTarget" class="text-white font-semibold">State Intelligence Headquarters, Sector 77</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Weaponry:</span>
+                  <span id="incidentWeapon" class="text-crimson font-bold">Rocket-Propelled Grenade (RPG)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Security Impact:</span>
+                  <span id="incidentSeverity" class="text-amberAlert">Unprecedented State Intelligence Breach</span>
+                </div>
+              </div>
+
+              <p id="incidentDesc" class="text-slate-300 text-sm leading-relaxed">
+                Attackers fired a Rocket-Propelled Grenade directly at the high-security Punjab Police Intelligence Headquarters in Mohali. This attack is part of an alarming trend where 22 police stations and establishments have suffered grenade and blast attacks under the current government.
+              </p>
+
+              <div class="border-l-2 border-crimson pl-3 py-1 text-xs text-slate-400 italic">
+                <span id="incidentQuote">"If the state cannot protect its own Intelligence Headquarters and police stations, how can ordinary citizens feel secure?"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-panelBorder flex items-center justify-between">
+            <span class="text-xs font-mono text-slate-500">Click any hotspot to examine</span>
+            <button onclick="openDossierModal('law')" class="text-xs font-mono text-crimson hover:text-crimsonBright flex items-center gap-1 font-bold">
+              <span>Inspect Full Case File</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: DETAILED CHARGESHEET ENTRIES (TABBED & SEARCHABLE) -->
+    <section id="issues-detail" class="space-y-6 scroll-mt-24">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>ITEMIZED INDICTMENT REPOSITORY</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+            Detailed Chargesheet Entries
+          </h2>
+          <p class="text-slate-400 text-sm max-w-2xl mt-1">
+            Full itemized evidence records across 54+ documented cases. Search keywords or click redacted text lines to declassify verified facts.
+          </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative w-full md:w-72">
+          <input type="text" id="chargesheetSearch" oninput="searchChargesheet()" placeholder="Search cases, names, FIRs..." class="w-full bg-charcoal border border-panelBorder focus:border-crimson rounded-lg px-3.5 py-2.5 text-xs font-mono text-white placeholder-slate-500 outline-none transition" />
+          <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute right-3 top-3"></i>
+        </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="flex flex-wrap items-center gap-2 border-b border-panelBorder pb-3 text-xs font-mono">
+        <button onclick="setChargesheetTab('all')" class="cs-tab px-3.5 py-1.5 rounded-md bg-crimson text-white font-bold transition" data-tab="all">ALL ENTRIES (54)</button>
+        <button onclick="setChargesheetTab('drugs')" class="cs-tab px-3.5 py-1.5 rounded-md bg-slateDark text-slate-300 hover:text-white transition" data-tab="drugs">DRUGS & NARCOTICS (9)</button>
+        <button onclick="setChargesheetTab('law')" class="cs-tab px-3.5 py-1.5 rounded-md bg-slateDark text-slate-300 hover:text-white transition" data-tab="law">LAW & ORDER (18)</button>
+        <button onclick="setChargesheetTab('vadakhilafi')" class="cs-tab px-3.5 py-1.5 rounded-md bg-slateDark text-slate-300 hover:text-white transition" data-tab="vadakhilafi">VADAKHILAFI (11)</button>
+        <button onclick="setChargesheetTab('corruption')" class="cs-tab px-3.5 py-1.5 rounded-md bg-slateDark text-slate-300 hover:text-white transition" data-tab="corruption">SCAMS & RAIDS (16)</button>
+      </div>
+
+      <!-- Itemized Entries Container -->
+      <div id="chargesheetList" class="space-y-4">
+        <!-- Javascript dynamically populates this with rich chargesheet cards -->
+      </div>
+    </section>
+
+    <!-- SECTION 5: EVIDENCE ROOM (AUTHENTIC MEDIA CLIPPINGS & PRESS DOSSIERS) -->
+    <section id="evidence-room" class="space-y-8 scroll-mt-24">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+            <i data-lucide="newspaper" class="w-4 h-4"></i>
+            <span>INVESTIGATIVE MEDIA ARCHIVE</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+            Evidence Room: Media Clippings &amp; Press Reports
+          </h2>
+          <p class="text-slate-400 text-sm max-w-2xl mt-1">
+            Real published investigative newspaper clippings, front-page news reports, and documented press findings covering drug deaths, jail cartels, police station blasts, and government failures.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+          <button onclick="filterEvidenceType('all')" class="ev-filter-btn px-3 py-1.5 rounded-lg bg-crimson text-white font-bold transition" data-ev="all">ALL CLIPPINGS</button>
+          <button onclick="filterEvidenceType('drugs')" class="ev-filter-btn px-3 py-1.5 rounded-lg bg-slateDark text-slate-300 hover:text-white transition" data-ev="drugs">DRUG CRISIS</button>
+          <button onclick="filterEvidenceType('violent')" class="ev-filter-btn px-3 py-1.5 rounded-lg bg-slateDark text-slate-300 hover:text-white transition" data-ev="violent">BLASTS &amp; GANG WARS</button>
+          <button onclick="filterEvidenceType('corruption')" class="ev-filter-btn px-3 py-1.5 rounded-lg bg-slateDark text-slate-300 hover:text-white transition" data-ev="corruption">SCAMS &amp; RAIDS</button>
+          <button onclick="filterEvidenceType('chargesheet')" class="ev-filter-btn px-3 py-1.5 rounded-lg bg-slateDark text-slate-300 hover:text-white transition" data-ev="chargesheet">LEGAL DOSSIER</button>
+        </div>
+      </div>
+
+      <!-- Top Master Evidence Board Banner -->
+      <div class="relative rounded-2xl overflow-hidden border border-panelBorder bg-charcoal p-6 shadow-2xl cursor-pointer group" onclick="openImageLightbox('img/newspaper_clippings.jpg', 'Investigative Evidence Board (85+ Pinned Clippings)')">
+        <div class="absolute inset-0 z-0">
+          <img src="img/newspaper_clippings.jpg" alt="Evidence Clippings Board" class="w-full h-full object-cover object-center filter saturate-125 opacity-40 group-hover:scale-102 transition duration-700" />
+          <div class="absolute inset-0 bg-gradient-to-r from-obsidian via-charcoal/80 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 max-w-2xl space-y-3">
+          <span class="evidence-stamp text-xs">MASTER EVIDENCE BOARD // 85+ CLIPPINGS</span>
+          <h3 class="text-2xl sm:text-3xl font-display font-black text-white">
+            Newspaper Headlines That Shook Punjab
+          </h3>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            From The Tribune and Ajit to Rozana Spokesman and Jag Bani, journalists across Punjab documented the reality that official PR attempted to conceal. Click to zoom the full 85-article evidence board.
+          </p>
+          <div class="pt-2 flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-lg bg-crimson/20 border border-crimson text-crimson font-mono text-xs font-bold flex items-center gap-1.5">
+              <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Inspect High-Res Board
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authentic Newspaper Clippings Grid (Newsprint Aesthetic) -->
+      <div id="mediaClippingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Clipping 1: Drug Overdose -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="drugs" onclick="openImageLightbox('img/mothers_tears.jpg', 'Media Investigation: Chitta Claims Another Youth in Punjab Village')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">THE TRIBUNE // INVESTIGATION</span>
+            <span>JULY 2024</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "Overdose Claims Another Youth in Bathinda; Mother Sits Beside Empty Room"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">ਬਠਿੰਡਾ ਵਿੱਚ ਨਸ਼ੇ ਦੀ ਓਵਰਡੋਜ਼ ਨਾਲ ਨੌਜਵਾਨ ਦੀ ਮੌਤ, ਪਿੰਡ ਵਾਸੀਆਂ ਵਿੱਚ ਰੋਸ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            Twenty-three-year-old Gurpreet was found dead near the village canal with a disposable syringe beside him. His mother told reporters that local peddlers operate openly with police protection.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-01</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Clipping</span>
+          </div>
+        </div>
+
+        <!-- Clipping 2: RPG Attack Front Page -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="violent" onclick="openImageLightbox('img/law_order_collapse.jpg', 'Front Page News: RPG Fired at Punjab Police Intelligence HQ in Mohali')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">ROZANA SPOKESMAN // BREAKING</span>
+            <span>MAY 2022</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "RPG Rocket Fired at Punjab Police Intelligence Headquarters in Mohali"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">ਮੁਹਾਲੀ ਇੰਟੈਲੀਜੈਂਸ ਹੈੱਡਕੁਆਰਟਰ 'ਤੇ ਰਾਕੇਟ ਲਾਂਚਰ ਨਾਲ ਹਮਲਾ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            In an unprecedented strike on state security, a rocket-propelled grenade shattered the third floor of the high-security Intelligence HQ in Sector 77, Mohali. Security agencies flag extreme intelligence failure.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-02</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Clipping</span>
+          </div>
+        </div>
+
+        <!-- Clipping 3: Village on Sale Banner -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="drugs" onclick="openImageLightbox('img/newspaper_clippings.jpg', 'Ajit Newspaper Report: Bhai Bhakhtaur Village Puts Up For Sale Banners')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">DAILY AJIT // EXCLUSIVE</span>
+            <span>AUGUST 2024</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "'Our Village is For Sale': Bathinda Residents Protest Rampant Drug Trade"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">'ਸਾਡਾ ਪਿੰਡ ਵਿਕਾਊ ਹੈ' — ਚਿੱਟੇ ਵਿਰੁੱਧ ਪਿੰਡ ਵਾਸੀਆਂ ਦਾ ਅਨੋਖਾ ਵਿਰੋਧ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            Desperate residents of Bhai Bhakhtaur village erected a giant banner declaring their village for sale after losing 8 young men to Chitta overdose in two months without any police crackdown.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-03</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Clipping</span>
+          </div>
+        </div>
+
+        <!-- Clipping 4: High Court on Prisons -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="drugs" onclick="viewEvidenceDetail('ev-hc')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">INDIAN EXPRESS // JUDICIAL</span>
+            <span>OCTOBER 2024</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "High Court Slams Punjab: 'Nothing Can Be More Serious Than Prison Narcotics Rings'"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">ਹਾਈ ਕੋਰਟ ਨੇ ਜੇਲ੍ਹਾਂ ਵਿੱਚ ਚੱਲ ਰਹੇ ਨਸ਼ਾ ਰੈਕੇਟਾਂ 'ਤੇ ਸਰਕਾਰ ਨੂੰ ਝਾੜਿਆ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            The High Court division bench expressed shock over drug kingpins and DSP-rank officers operating narcotics and extortion syndicates directly from Sangrur and Kapurthala central jails.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-04</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Order</span>
+          </div>
+        </div>
+
+        <!-- Clipping 5: CBI Raid on CM Camp Office -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="corruption" onclick="viewEvidenceDetail('ev-cbi')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">JAG BANI // INVESTIGATIVE</span>
+            <span>2024 REPORT</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "CBI Raids CM Camp Office in High-Profile Cash-for-Postings Probe"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">ਮੁੱਖ ਮੰਤਰੀ ਕੈਂਪ ਆਫਿਸ 'ਤੇ ਸੀਬੀਆਈ ਦੇ ਛਾਪੇ, ਓਐਸਡੀ ਘੁਮਣ ਤੋਂ ਪੁੱਛਗਿੱਛ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            Following Punjab & Haryana High Court orders, central investigative teams raided eight premises including the CM Camp Office regarding allegations of bribes taken for official executive postings.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-05</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Report</span>
+          </div>
+        </div>
+
+        <!-- Clipping 6: Trader Extortion Panic -->
+        <div class="news-cutout rounded-xl p-5 space-y-3 group cursor-pointer relative" data-category="violent" onclick="openImageLightbox('img/corruption_scams.jpg', 'Press Investigation: Traders in Nakodar and Abohar Face Gangster Extortion')">
+          <div class="tape-corner"></div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-2 text-[11px] font-mono text-slate-600">
+            <span class="font-bold text-red-700">PUNJABI TRIBUNE // COMMERCE</span>
+            <span>JANUARY 2025</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-serif font-black text-xl text-slate-900 leading-tight group-hover:text-red-700 transition">
+              "Traders Close Shops in Abohar After Slaying; Businessmen Shift to UP"
+            </h4>
+            <p class="text-xs font-gurmukhi text-slate-700 font-bold">ਵਪਾਰੀਆਂ ਦੇ ਕਤਲਾਂ ਮਗਰੋਂ ਦਹਿਸ਼ਤ, ਪੰਜਾਬ ਵਿੱਚੋਂ ਪੂੰਜੀ ਦਾ ਪਲਾਇਨ</p>
+          </div>
+          <p class="text-slate-800 text-xs font-serif leading-relaxed line-clamp-3">
+            Following the murders of merchant Sanjay Verma in Abohar and Bhupinder Singh Chawla in Nakodar over extortion refusal, over 40 prominent business houses announced shifting manufacturing units outside Punjab.
+          </p>
+          <div class="pt-2 border-t border-slate-300 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>PRESS CITATION #CL-06</span>
+            <span class="text-red-700 font-bold flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> View Article</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Legal Chargesheet Documents Highlight Box -->
+      <div id="legalChargesheetBox" data-category="chargesheet" class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-panelBorder pb-4">
+          <div>
+            <span class="evidence-stamp text-xs">OFFICIAL CHARGESHEET EXHIBITS</span>
+            <h3 class="text-xl font-display font-bold text-white mt-1">Original 2-Page Legal Chargesheet Documents</h3>
+            <p class="text-xs font-mono text-slate-400">High-resolution scans of the formal indictments with forensic stamps and verification signatures.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="downloadChargesheetPDF()" class="px-4 py-2 rounded-lg bg-crimson hover:bg-crimsonBright text-white font-mono text-xs font-bold flex items-center gap-1.5 transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Download PDF
+            </button>
+            <button onclick="shareChargesheet()" class="px-3.5 py-2 rounded-lg bg-slateDark border border-slate-700 text-slate-300 hover:text-white font-mono text-xs flex items-center gap-1.5 transition">
+              <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="rounded-xl overflow-hidden border border-slate-700 bg-obsidian cursor-pointer group shadow-xl" onclick="openImageLightbox('img/chargesheet_page1.jpg', 'Chargesheet Page 1: Summary of Offenses & Narcotics Epidemic')">
+            <div class="p-3 bg-obsidian flex justify-between items-center text-xs font-mono border-b border-panelBorder">
+              <span class="text-crimson font-bold">PAGE 1 // EXHIBIT #01</span>
+              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Click to Zoom</span>
+            </div>
+            <img src="img/chargesheet_page1.jpg" alt="Chargesheet Page 1" class="w-full h-80 object-cover object-top group-hover:scale-102 transition duration-500" />
+          </div>
+
+          <div class="rounded-xl overflow-hidden border border-slate-700 bg-obsidian cursor-pointer group shadow-xl" onclick="openImageLightbox('img/chargesheet_page2.jpg', 'Chargesheet Page 2: Fund Discrepancy & Forensic Analysis')">
+            <div class="p-3 bg-obsidian flex justify-between items-center text-xs font-mono border-b border-panelBorder">
+              <span class="text-crimson font-bold">PAGE 2 // EXHIBIT #02</span>
+              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Click to Zoom</span>
+            </div>
+            <img src="img/chargesheet_page2.jpg" alt="Chargesheet Page 2" class="w-full h-80 object-cover object-top group-hover:scale-102 transition duration-500" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: "SUBMIT YOUR STORY" CITIZEN WHISTLEBLOWER PORTAL -->
+    <section id="submit-story" class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-charcoal via-slateDark to-obsidian border-2 border-cyan-500/40 shadow-2xl space-y-8 scroll-mt-24">
+      <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-8 w-full min-w-0">
+        
+        <!-- Left: Portal Info & Moderation Process -->
+        <div class="space-y-4 max-w-xl flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="citizen-stamp">CITIZEN WHISTLEBLOWER PORTAL</span>
+            <span class="text-xs font-mono text-cyan-400">256-BIT ENCRYPTED</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-display font-black text-white leading-tight">
+            Submit Your Evidence &amp; Ground Story
+          </h2>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Have you or your community faced open drug trafficking, extortion threats, broken guarantees, or bribe demands under this government? Upload photos, videos, FIRs, or personal testimonies directly.
+          </p>
+
+          <div class="p-4 rounded-xl bg-obsidian border border-panelBorder space-y-3 font-mono text-xs">
+            <div class="text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>CIVIC VERIFICATION WORKFLOW:</span>
+            </div>
+            <div class="space-y-2 text-slate-300">
+              <div class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">1.</span>
+                <span>Upload photos, videos, or documents (anonymous submissions supported).</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">2.</span>
+                <span>Our legal and investigative desk audits location, metadata, and primary evidence.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">3.</span>
+                <span>Approved entries are published into the Evidence Room with a distinct <strong>"Citizen Submission"</strong> badge.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Privacy Shield Pill -->
+          <div class="flex items-center gap-3 p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/20 text-xs font-mono text-cyan-300">
+            <i data-lucide="lock" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+            <span>Whistleblower Identity Protection: IP addresses are not stored. All uploaded files are scrubbed of EXIF geolocation data.</span>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Upload & Story Form -->
+        <div class="w-full lg:w-[460px] xl:w-[500px] shrink-0 p-6 rounded-2xl bg-charcoal border border-panelBorder shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-panelBorder pb-3">
+            <h4 class="font-display font-bold text-white text-lg">Whistleblower Dispatch Form</h4>
+            <span class="text-[11px] font-mono text-slate-400">DISPATCH #PB-SUBMIT</span>
+          </div>
+
+          <form onsubmit="handleCitizenSubmission(event)" class="space-y-4 font-mono text-xs">
+            
+            <!-- Anonymous Toggle -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-obsidian border border-panelBorder">
+              <div class="flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i>
+                <span class="text-white font-bold">Remain Anonymous</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="anonToggle" onchange="toggleAnonMode(this.checked)" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+              </label>
+            </div>
+
+            <!-- Citizen Name & Contact (Toggleable) -->
+            <div id="authorFields" class="hidden space-y-3">
+              <div>
+                <label class="text-slate-400 block mb-1">Your Name (Optional):</label>
+                <input type="text" id="citizenName" placeholder="E.g., Harjit Singh" class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none" />
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Phone / Signal (Confidential):</label>
+                <input type="tel" id="citizenPhone" placeholder="For verification only" class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none" />
+              </div>
+            </div>
+
+            <!-- District & Category -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-slate-400 block mb-1">District / Region:</label>
+                <select id="citizenDistrict" class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none">
+                  <option value="Bathinda">Bathinda (ਬਠਿੰਡਾ)</option>
+                  <option value="Amritsar">Amritsar (ਅੰਮ੍ਰਿਤਸਰ)</option>
+                  <option value="Ludhiana">Ludhiana (ਲੁਧਿਆਣਾ)</option>
+                  <option value="Jalandhar">Jalandhar (ਜਲੰਧਰ)</option>
+                  <option value="Mohali">SAS Nagar / Mohali</option>
+                  <option value="Faridkot">Faridkot / Kotkapura</option>
+                  <option value="Fazilka">Fazilka / Jalalabad</option>
+                  <option value="Sangrur">Sangrur (ਸੰਗਰੂਰ)</option>
+                  <option value="Patiala">Patiala (ਪਟਿਆਲਾ)</option>
+                  <option value="Other">Other District</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-slate-400 block mb-1">Incident Category:</label>
+                <select id="citizenCategory" class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none">
+                  <option value="drugs">Drugs & Narcotics Trade</option>
+                  <option value="law">Law & Order / Extortion</option>
+                  <option value="vadakhilafi">Broken Promise / Jobs / MSP</option>
+                  <option value="corruption">Bribes & Government Scams</option>
+                  <option value="health">Hospital / Clinic Failure</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Title & Story -->
+            <div>
+              <label class="text-slate-400 block mb-1">Incident Headline / Title:</label>
+              <input type="text" id="citizenTitle" required placeholder="E.g., Open drug sales near rural stadium" class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none" />
+            </div>
+
+            <div>
+              <label class="text-slate-400 block mb-1">Documented Description & Facts:</label>
+              <textarea id="citizenStory" rows="3" required placeholder="Provide dates, location, officials informed, and what happened..." class="w-full bg-obsidian border border-panelBorder focus:border-cyan-500 rounded-lg p-2.5 text-white outline-none resize-none"></textarea>
+            </div>
+
+            <!-- Drag & Drop Upload Dropzone -->
+            <div>
+              <label class="text-slate-400 block mb-1">Attach Photos, Videos, or Documents:</label>
+              <div id="dropzone" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" class="border-2 border-dashed border-panelBorder hover:border-cyan-500 rounded-xl p-4 text-center cursor-pointer transition bg-obsidian/70 space-y-2">
+                <i data-lucide="upload" class="w-6 h-6 mx-auto text-cyan-400"></i>
+                <div class="text-xs text-slate-300">
+                  <span class="font-bold text-cyan-400">Click to upload</span> or drag and drop
+                </div>
+                <p class="text-[10px] text-slate-500">Supports JPG, PNG, MP4, MOV, PDF (Max 50MB)</p>
+                <input type="file" id="fileInput" class="hidden" multiple onchange="handleFileSelect(event)" />
+              </div>
+              <div id="filePreviewContainer" class="mt-2 space-y-1.5 hidden">
+                <!-- Preview items inserted here -->
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-obsidian font-mono font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Transmit Whistleblower Report</span>
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+
+      <!-- Live Verified Citizen Submissions Gallery -->
+      <div class="pt-8 border-t border-panelBorder space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="citizen-stamp text-xs">COMMUNITY REPOSITORY</span>
+            <h3 class="text-xl font-display font-bold text-white mt-1">Recently Approved Citizen Submissions</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">VERIFIED BY EDITORIAL DESK</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- Approved Submission 1 -->
+          <div class="p-5 rounded-2xl bg-charcoal border border-cyan-500/30 space-y-3 relative group">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                <i data-lucide="check-check" class="w-3.5 h-3.5"></i> CITIZEN SUBMISSION
+              </span>
+              <span class="text-slate-400">BATHINDA</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">"Our Village is for Sale" Banner Photographs</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              "We placed banners at our village entrance after drug peddlers began openly selling Chitta to 15-year-olds. Even after 4 representations to SSP Bathinda, no permanent police picket was deployed."
+            </p>
+            <div class="pt-2 border-t border-panelBorder flex justify-between items-center text-[11px] font-mono text-slate-400">
+              <span>SUBMITTED: ANONYMOUS ELDER</span>
+              <span class="text-cyan-400 font-bold">STATUS: PUBLISHED</span>
+            </div>
+          </div>
+
+          <!-- Approved Submission 2 -->
+          <div class="p-5 rounded-2xl bg-charcoal border border-cyan-500/30 space-y-3 relative group">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                <i data-lucide="check-check" class="w-3.5 h-3.5"></i> CITIZEN SUBMISSION
+              </span>
+              <span class="text-slate-400">NAKODAR / JALANDHAR</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">Trader Extortion WhatsApp Audio Recording</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              "Audio clip of ransom call received by our cloth market association demanding ₹25 lakh monthly protection fee. Trader Bhupinder Singh was shot shortly after reporting this to police."
+            </p>
+            <div class="pt-2 border-t border-panelBorder flex justify-between items-center text-[11px] font-mono text-slate-400">
+              <span>SUBMITTED: MERCHANT UNION</span>
+              <span class="text-cyan-400 font-bold">STATUS: PUBLISHED</span>
+            </div>
+          </div>
+
+          <!-- Approved Submission 3 -->
+          <div class="p-5 rounded-2xl bg-charcoal border border-cyan-500/30 space-y-3 relative group">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                <i data-lucide="check-check" class="w-3.5 h-3.5"></i> CITIZEN SUBMISSION
+              </span>
+              <span class="text-slate-400">MANSA MANDI</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base">Moong Distress Sale Receipts Below MSP</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              "Photographs of mandi sale slips where 200 quintals of moong were sold at ₹6,100 per quintal while government MSP was ₹8,558. Government procurement agency refused to purchase."
+            </p>
+            <div class="pt-2 border-t border-panelBorder flex justify-between items-center text-[11px] font-mono text-slate-400">
+              <span>SUBMITTED: HARPREET S. (FARMER)</span>
+              <span class="text-cyan-400 font-bold">STATUS: PUBLISHED</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: PROMISE VS. PERFORMANCE (COMPARATIVE AUDIT) -->
+    <section id="promise-vs-reality" class="space-y-8 scroll-mt-24">
+      <div>
+        <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span>COMPARATIVE PERFORMANCE AUDIT</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+          Guarantees Made vs. Ground Delivery
+        </h2>
+        <p class="text-slate-400 text-sm max-w-2xl mt-1">
+          Contrasting official electoral pledges signed by AAP leadership with documented government statistics and ground reality after 4 years in office.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Row 1: Jobs -->
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+            <span class="font-bold text-white text-base">1. Employment: 25 Lakh Jobs Pledged</span>
+            <span class="text-crimson font-extrabold bg-crimson/10 px-2.5 py-1 rounded border border-crimson/30">DELIVERED: 2.45%</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-3.5 rounded-xl bg-obsidian border border-panelBorder/70">
+              <span class="text-slate-400 uppercase block mb-1 font-bold">Electoral Promise:</span>
+              <p class="text-slate-200 font-sans text-sm">Create 25 lakh jobs for Punjab's youth and eliminate youth unemployment completely.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian border border-crimson/40">
+              <span class="text-crimson uppercase block mb-1 font-bold">Documented Reality:</span>
+              <p class="text-slate-200 font-sans text-sm">Only 61,281 government jobs delivered. Youth unemployment stands at a staggering 20.2% (vs 4.8% national average).</p>
+            </div>
+          </div>
+          <div class="w-full bg-slateDark h-3 rounded-full overflow-hidden">
+            <div class="bg-crimson h-full rounded-full transition-all duration-1000" style="width: 2.45%;"></div>
+          </div>
+        </div>
+
+        <!-- Row 2: Mohalla Clinics -->
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+            <span class="font-bold text-white text-base">2. Healthcare: 16,000 Mohalla Clinics</span>
+            <span class="text-crimson font-extrabold bg-crimson/10 px-2.5 py-1 rounded border border-crimson/30">TARGET CUT BY 91%</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-3.5 rounded-xl bg-obsidian border border-panelBorder/70">
+              <span class="text-slate-400 uppercase block mb-1 font-bold">Electoral Promise:</span>
+              <p class="text-slate-200 font-sans text-sm">Establish 16,000 Mohalla Clinics across every village and ward in Punjab to transform primary healthcare.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian border border-crimson/40">
+              <span class="text-crimson uppercase block mb-1 font-bold">Documented Reality:</span>
+              <p class="text-slate-200 font-sans text-sm">Target quietly slashed by over 91% down to just 1,432 clinics over five years.</p>
+            </div>
+          </div>
+          <div class="w-full bg-slateDark h-3 rounded-full overflow-hidden">
+            <div class="bg-crimson h-full rounded-full transition-all duration-1000" style="width: 8.95%;"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: Medical Colleges -->
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+            <span class="font-bold text-white text-base">3. Healthcare Infrastructure: 16 New Medical Colleges</span>
+            <span class="text-crimson font-extrabold bg-crimson/10 px-2.5 py-1 rounded border border-crimson/30">0 DELIVERED</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-3.5 rounded-xl bg-obsidian border border-panelBorder/70">
+              <span class="text-slate-400 uppercase block mb-1 font-bold">Electoral Promise:</span>
+              <p class="text-slate-200 font-sans text-sm">Establish 16 state-of-the-art government medical colleges across Punjab within 5 years.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian border border-crimson/40">
+              <span class="text-crimson uppercase block mb-1 font-bold">Documented Reality:</span>
+              <p class="text-slate-200 font-sans text-sm">Even after completing four years in power, not a single new fully operational medical college has been established.</p>
+            </div>
+          </div>
+          <div class="w-full bg-slateDark h-3 rounded-full overflow-hidden">
+            <div class="bg-crimson h-full rounded-full transition-all duration-1000" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Row 4: Drug Eradication -->
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+            <span class="font-bold text-white text-base">4. Drug-Free Punjab: Eradication within 4 Months</span>
+            <span class="text-crimson font-extrabold bg-crimson/10 px-2.5 py-1 rounded border border-crimson/30">RECORD HIGHEST DEATHS</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-3.5 rounded-xl bg-obsidian border border-panelBorder/70">
+              <span class="text-slate-400 uppercase block mb-1 font-bold">Electoral Promise:</span>
+              <p class="text-slate-200 font-sans text-sm">Make Punjab "Nasha Mukt" within four months of forming government, breaking drug nexus completely.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian border border-crimson/40">
+              <span class="text-crimson uppercase block mb-1 font-bold">Documented Reality:</span>
+              <p class="text-slate-200 font-sans text-sm">29 NDPS cases per lakh population in 2024 (nearly 4x national average). Speaker Kultar Singh Sandhwan admitted failure in eradicating Chitta.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 8: GROUND REPORTS (DISTRICT DISTRESS SIGNALS) -->
+    <section id="ground-reports" class="space-y-6 scroll-mt-24">
+      <div>
+        <div class="flex items-center gap-2 text-crimson font-mono text-xs font-bold tracking-widest uppercase">
+          <i data-lucide="radio" class="w-4 h-4"></i>
+          <span>GROUND REPORTS & PUBLIC GRIEVANCES</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-1">
+          Ground Reports: Distress Signals Across Punjab
+        </h2>
+        <p class="text-slate-400 text-sm max-w-2xl mt-1">
+          When governance collapses, citizens resort to desperate distress signals. Verified reports from communities across the state.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex items-center gap-2 text-amberAlert font-mono text-xs">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+            <span>Bhai Bhakhtaur Village, Bathinda</span>
+          </div>
+          <h4 class="font-display font-bold text-xl text-white">"Our Village is for Sale" Banners</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Distressed residents hung banners reading <span class="text-amberAlert font-semibold">"Our Village is for Sale"</span> in protest against rampant open drug trafficking and total police apathy.
+          </p>
+          <div class="text-[11px] font-mono text-slate-500 pt-2 border-t border-panelBorder">
+            SOURCE: PUBLIC RESIDENTS MEMORANDUM
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex items-center gap-2 text-crimson font-mono text-xs">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+            <span>Kotkapura, Faridkot</span>
+          </div>
+          <h4 class="font-display font-bold text-xl text-white">"This House is for Sale" Campaign</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Families placed signs outside their houses saying <span class="text-crimson font-semibold">"This House is for Sale"</span> after drug addicts and peddlers created daily terror in residential streets.
+          </p>
+          <div class="text-[11px] font-mono text-slate-500 pt-2 border-t border-panelBorder">
+            SOURCE: LOCAL CIVIC PROTEST REPORTS
+          </div>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-charcoal border border-panelBorder space-y-3">
+          <div class="flex items-center gap-2 text-red-400 font-mono text-xs">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+            <span>Abohar & Nakodar</span>
+          </div>
+          <h4 class="font-display font-bold text-xl text-white">Business Extortion Flight</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Murder of Sanjay Verma in Abohar forced markets and schools to close in panic. Cloth merchant and security officer murdered in Nakodar over ransom, prompting capital flight to UP.
+          </p>
+          <div class="text-[11px] font-mono text-slate-500 pt-2 border-t border-panelBorder">
+            SOURCE: TRADER ASSOCIATION PETITION
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 9: DOWNLOADS HUB (FINAL EXPORT SECTION) -->
+    <section id="downloads" class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-charcoal via-slateDark to-obsidian border border-panelBorder space-y-6 scroll-mt-24 shadow-2xl">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="evidence-stamp text-xs">OFFICIAL EXPORT PORTAL</span>
+          <h2 class="text-3xl font-display font-black text-white mt-2">
+            Chargesheet Downloads & Archival Hub
+          </h2>
+          <p class="text-slate-400 text-sm max-w-xl mt-1">
+            Download the verified digital chargesheet, executive briefings, and full factual exhibits for public distribution and legal scrutiny.
+          </p>
+        </div>
+        <button onclick="window.print()" class="px-5 py-3 rounded-xl bg-crimson hover:bg-crimsonBright text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Print Complete Dossier</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+        
+        <div class="p-5 rounded-xl bg-obsidian border border-panelBorder hover:border-crimson transition flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <i data-lucide="file-check-2" class="w-6 h-6 text-crimson"></i>
+            <h4 class="font-mono font-bold text-sm text-white">Complete Chargesheet (PDF)</h4>
+            <p class="text-[11px] text-slate-400">All 54 verified counts, statistics, and legal references compiled.</p>
+          </div>
+          <button onclick="downloadChargesheetPDF()" class="mt-4 px-3 py-2 bg-slateDark hover:bg-crimson text-white rounded-lg font-mono text-xs flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download PDF</span>
+          </button>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian border border-panelBorder hover:border-crimson transition flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <i data-lucide="skull" class="w-6 h-6 text-red-400"></i>
+            <h4 class="font-mono font-bold text-sm text-white">Drugs Dossier Brief</h4>
+            <p class="text-[11px] text-slate-400">Overdose deaths, jail narcotics racket, and NDPS audit summary.</p>
+          </div>
+          <button onclick="downloadChargesheetPDF()" class="mt-4 px-3 py-2 bg-slateDark hover:bg-crimson text-white rounded-lg font-mono text-xs flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download PDF</span>
+          </button>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian border border-panelBorder hover:border-crimson transition flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <i data-lucide="flame" class="w-6 h-6 text-amberAlert"></i>
+            <h4 class="font-mono font-bold text-sm text-white">Law & Order Dossier</h4>
+            <p class="text-[11px] text-slate-400">RPG attack logs, police station grenade incidents, extortion files.</p>
+          </div>
+          <button onclick="downloadChargesheetPDF()" class="mt-4 px-3 py-2 bg-slateDark hover:bg-crimson text-white rounded-lg font-mono text-xs flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download PDF</span>
+          </button>
+        </div>
+
+        <div class="p-5 rounded-xl bg-obsidian border border-panelBorder hover:border-crimson transition flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <i data-lucide="scale" class="w-6 h-6 text-yellow-400"></i>
+            <h4 class="font-mono font-bold text-sm text-white">Scams & Vadakhilafi Dossier</h4>
+            <p class="text-[11px] text-slate-400">CBI raids, Suntec City ED report, GMADA ₹10k Cr auction files.</p>
+          </div>
+          <button onclick="downloadChargesheetPDF()" class="mt-4 px-3 py-2 bg-slateDark hover:bg-crimson text-white rounded-lg font-mono text-xs flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download PDF</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-20 border-t border-panelBorder/80 bg-charcoal/90 py-12 text-slate-400 font-mono text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="space-y-1 text-center md:text-left">
+        <div class="text-white font-display font-bold text-base">AAP DA PAAP PATRA // ਆਪ ਦਾ ਪਾਪ ਪੱਤਰ</div>
+        <p class="text-slate-400 text-xs">Digital Investigative Chargesheet & Public Whistleblower Portal</p>
+        <p class="text-slate-500 text-[11px]">Compiled from High Court filings, CAG audit logs, NCRB records, and verified ground documentation.</p>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <a href="#chargesheets" class="hover:text-crimson">Chargesheets</a>
+        <span>•</span>
+        <a href="#crime-map" class="hover:text-crimson">Crime Map</a>
+        <span>•</span>
+        <a href="#evidence-room" class="hover:text-crimson">Evidence Room</a>
+        <span>•</span>
+        <a href="#submit-story" class="hover:text-cyanGlow">Submit Story</a>
+        <span>•</span>
+        <a href="#downloads" class="hover:text-crimson">Downloads</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 3D DOSSIER FOLDER MODAL -->
+  <div id="dossierModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative w-full max-w-4xl max-h-[90vh] bg-charcoal border-2 border-panelBorder rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-panelBorder bg-obsidian flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="evidence-stamp text-xs" id="modalDossierTag">CLASSIFIED DOSSIER</span>
+          <div>
+            <h3 id="modalTitle" class="text-xl sm:text-2xl font-display font-black text-white">Investigative Dossier</h3>
+            <p id="modalSubtitle" class="text-xs font-mono text-slate-400">REFERENCE: PB-CASE-FILE</p>
+          </div>
+        </div>
+        <button onclick="closeDossierModal()" class="w-8 h-8 rounded-lg bg-slateDark border border-slate-700 hover:border-crimson text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Folder Paper Interior) -->
+      <div class="p-6 overflow-y-auto space-y-6 flex-1 text-slate-200">
+        <!-- Stamp & Metrics -->
+        <div class="p-4 rounded-xl bg-obsidian border border-panelBorder flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+          <div>
+            <span class="text-slate-400 block">STATUS</span>
+            <span class="text-crimson font-bold">CHARGED &amp; EVIDENCE CATALOGUED</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">JURISDICTION</span>
+            <span class="text-white">PUNJAB STATE</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">PRIMARY STATISTIC</span>
+            <span id="modalStat" class="text-amberAlert font-bold">51,516 NDPS FIRs</span>
+          </div>
+          <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slateDark hover:bg-crimson text-white border border-slate-700 transition">
+            Print Exhibit
+          </button>
+        </div>
+
+        <!-- Dossier Content Points -->
+        <div class="space-y-4">
+          <h4 class="font-mono text-xs uppercase tracking-wider text-crimson font-bold flex items-center gap-1.5">
+            <i data-lucide="file-warning" class="w-4 h-4"></i>
+            <span>DOCUMENTED CHARGES & EXHIBITS</span>
+          </h4>
+          <div id="modalEntries" class="space-y-3 font-sans text-sm">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-panelBorder bg-obsidian flex justify-between items-center text-xs font-mono">
+        <span class="text-slate-400">PRESS ESC TO CLOSE</span>
+        <button onclick="closeDossierModal()" class="px-4 py-2 rounded-lg bg-crimson text-white font-bold hover:bg-crimsonBright transition">
+          Done Reviewing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE EXHIBIT INSPECTOR MODAL -->
+  <div id="evidenceModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl bg-charcoal border-2 border-panelBorder rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-panelBorder pb-3">
+        <span class="evidence-stamp text-xs" id="evDocTag">EXHIBIT RECORD</span>
+        <button onclick="closeEvidenceModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div>
+        <h3 id="evDocTitle" class="text-xl font-display font-bold text-white">Exhibit Inspection</h3>
+        <p id="evDocSub" class="text-xs font-mono text-slate-400 mt-0.5">SOURCE: OFFICIAL JUDICIAL RECORD</p>
+      </div>
+      <div id="evDocBody" class="p-4 rounded-xl bg-obsidian border border-panelBorder font-mono text-xs text-slate-300 leading-relaxed whitespace-pre-line">
+        <!-- Exhibit text -->
+      </div>
+      <div class="flex justify-end pt-2">
+        <button onclick="closeEvidenceModal()" class="px-4 py-2 bg-slateDark border border-slate-700 hover:border-crimson rounded-lg text-xs font-mono text-white">
+          Close Inspector
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CITIZEN SUBMISSION SUCCESS MODAL -->
+  <div id="submissionSuccessModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative w-full max-w-lg bg-charcoal border-2 border-cyan-500 rounded-2xl p-6 sm:p-8 space-y-5 shadow-2xl text-center">
+      <div class="w-16 h-16 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      
+      <div class="space-y-2">
+        <span class="citizen-stamp">ENCRYPTED TRANSMISSION CONFIRMED</span>
+        <h3 class="text-2xl font-display font-black text-white">Evidence Dispatched to Moderation Desk</h3>
+        <p class="text-slate-300 text-xs sm:text-sm">
+          Your whistleblower report and attached files have been received with 256-bit AES encryption.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-obsidian border border-panelBorder font-mono text-xs text-left space-y-2">
+        <div class="flex items-center justify-between text-slate-400">
+          <span>Tracking Token:</span>
+          <div class="flex items-center gap-2">
+            <span id="successToken" class="text-cyan-400 font-bold">PB-WHISTLE-2026-9481</span>
+            <button type="button" onclick="copyTrackingToken()" id="copyTokenBtn" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-900 transition text-[10px] font-bold">
+              COPY
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-between text-slate-400"><span>Security Status:</span> <span class="text-green-400 font-bold">Metadata Scrubbed &amp; Hashed</span></div>
+        <div class="flex justify-between text-slate-400"><span>Editorial Queue:</span> <span class="text-amberAlert font-bold">Pending Fact-Check Audit</span></div>
+      </div>
+
+      <p class="text-[11px] font-mono text-slate-500">
+        Once verified by our investigative journalism desk, your report will appear in the Evidence Room with the official "Citizen Submission" seal.
+      </p>
+
+      <button onclick="closeSuccessModal()" class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-black font-mono font-bold text-xs uppercase tracking-wider transition">
+        Return to Platform
+      </button>
+    </div>
+  </div>
+
+  <!-- IMAGE LIGHTBOX MODAL -->
+  <div id="imageLightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-[90vh] bg-charcoal border-2 border-panelBorder rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+      <div class="p-3.5 bg-obsidian border-b border-panelBorder flex items-center justify-between">
+        <span id="lightboxCaption" class="text-xs font-mono text-white font-bold">Document Inspection</span>
+        <div class="flex items-center gap-2">
+          <button onclick="downloadChargesheetPDF()" class="px-3 py-1 rounded bg-crimson text-white font-mono text-xs font-bold">Download</button>
+          <button onclick="closeLightbox()" class="p-1 rounded text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <div class="overflow-auto p-4 flex items-center justify-center bg-obsidian">
+        <img id="lightboxImg" src="" alt="Enlarged Document" class="max-w-full max-h-[75vh] object-contain rounded shadow-lg" />
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC & ANIMATIONS -->
+  <script>
+    // --- 1. LENIS SMOOTH SCROLL ---
+    let lenis = null;
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        smoothWheel: true,
+      });
+      window.lenis = lenis;
+
+      lenis.on('scroll', () => {
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.update();
+      });
+
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+
+      gsap.ticker.lagSmoothing(0);
+    } catch (e) {
+      console.log('Lenis fallback active', e);
+    }
+
+    // Smooth Anchor Navigation
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href');
+          if (targetId && targetId !== '#' && targetId.length > 1) {
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+              e.preventDefault();
+              if (window.lenis) {
+                window.lenis.scrollTo(targetEl, { offset: -70 });
+              } else {
+                targetEl.scrollIntoView({ behavior: 'smooth' });
+              }
+            }
+          }
+        });
+      });
+    });
+
+    // --- 2. AMBIENT PARTICLE ENGINE ---
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 50;
+        this.size = Math.random() * 2 + 0.7;
+        this.speedY = Math.random() * 0.6 + 0.2;
+        this.speedX = (Math.random() - 0.5) * 0.35;
+        this.opacity = Math.random() * 0.4 + 0.15;
+        this.color = Math.random() > 0.5 ? 'rgba(225, 29, 72,' : 'rgba(245, 158, 11,';
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        if (this.y < -10) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${this.color} ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 50; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Spotlight cursor follower
+    window.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    });
+
+    // --- 3. ACOUSTIC FEEDBACK SYNTHESIZER ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function playClickSound() {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(560, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        icon.className = 'w-4 h-4 text-slate-300';
+        playClickSound();
+      } else {
+        icon.className = 'w-4 h-4 text-red-500 line-through';
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button, a, input, select, .redacted')) {
+        playClickSound();
+      }
+    });
+
+    // --- 4. CHARGESHEET DATA DATABASE ---
+    const chargesheetData = {
+      drugs: [
+        {
+          id: "DRG-01",
+          cat: "drugs",
+          title: "Chitta Sold Like Candies Across Punjab Villages",
+          punjabi: "ਪਿੰਡਾਂ ਵਿੱਚ ਟੌਫੀਆਂ ਵਾਂਗ ਵਿਕ ਰਿਹਾ ਚਿੱਟਾ",
+          desc: "Just as villagers once visited flour mills, today youth flock to drug dens for Chitta (heroin). Reports of doorstep delivery have become pervasive across rural Punjab.",
+          stat: "Highest overdose fatalities in India for 2 consecutive years.",
+          redacted: "Speaker Kultar Singh Sandhwan publicly admitted government failure to eradicate Chitta."
+        },
+        {
+          id: "DRG-02",
+          cat: "drugs",
+          title: "Broken 1-Month Eradication Promise",
+          punjabi: "ਇੱਕ ਮਹੀਨੇ ਵਿੱਚ ਨਸ਼ਾ ਖਤਮ ਕਰਨ ਦਾ ਝੂਠਾ ਵਾਅਦਾ",
+          desc: "In 2022, AAP solemnly pledged to eradicate drugs within 30 days of forming government. Over 4 years later, the network has only expanded into school ecosystems.",
+          stat: "29 NDPS cases per lakh population in 2024 (nearly 4x national average).",
+          redacted: "Internal enforcement reports reveal supply chains remain fully entrenched."
+        },
+        {
+          id: "DRG-03",
+          cat: "drugs",
+          title: "7 Lakh Children Trapped in Narcotics Abuse",
+          punjabi: "10 ਤੋਂ 17 ਸਾਲ ਦੇ 7 ਲੱਖ ਬੱਚੇ ਨਸ਼ਿਆਂ ਦੇ ਜਾਲ ਵਿੱਚ",
+          desc: "Official projections estimate that approximately 7 lakh minors aged 10 to 17 are actively consuming narcotics across Punjab at an age intended for education and sports.",
+          stat: "700,000 minors affected; overdose fatalities grossly underreported due to stigma.",
+          redacted: "State officers confirmed large numbers of youth fatalities are concealed without autopsies."
+        },
+        {
+          id: "DRG-04",
+          cat: "drugs",
+          title: "Overdose Tragedy in Shaheed Bhagat Singh's Native Village",
+          punjabi: "ਸ਼ਹੀਦ ਭਗਤ ਸਿੰਘ ਦੇ ਜੱਦੀ ਪਿੰਡ ਖਟਕੜ ਕਲਾਂ ਵਿੱਚ ਨੌਜਵਾਨ ਦੀ ਓਵਰਡੋਜ਼ ਨਾਲ ਮੌਤ",
+          desc: "In Khatkar Kalan—the sacred village where Chief Minister Bhagwant Mann took his ceremonial oath—a young man died of a drug overdose with syringes found beside his body.",
+          stat: "Overdose death occurred in the very symbol of Punjab's revolutionary heritage.",
+          redacted: "Syringes frequently recovered from public village sports grounds and roadsides."
+        },
+        {
+          id: "DRG-05",
+          cat: "drugs",
+          title: "Endless Queues for Daily Sublingual De-addiction Tablets",
+          punjabi: "ਨਸ਼ਾ ਛੁਡਾਊ ਕੇਂਦਰਾਂ ਦੇ ਬਾਹਰ ਲੰਬੀਆਂ ਲਾਈਨਾਂ",
+          desc: "Desperate queues of young men snake outside government OOAT centers waiting for sublingual buprenorphine tablets, demonstrating the overwhelming scale of dependency.",
+          stat: "Lakhs registered in OOAT clinics across 23 districts.",
+          redacted: "Sublingual tablet shortages frequently reported, forcing addicts back to illicit street supply."
+        },
+        {
+          id: "DRG-06",
+          cat: "drugs",
+          title: "51,516 NDPS FIRs & 67,519 Arrests (Mar 2025–Jul 2026)",
+          punjabi: "51,516 ਐਨਡੀਪੀਐਸ ਐਫਆਈਆਰ ਅਤੇ 67,519 ਗ੍ਰਿਫਤਾਰੀਆਂ",
+          desc: "Massive volume of cases registered under the NDPS Act within a 16-month period, reflecting an uncontrolled narcotic crisis engulfing everyday life.",
+          stat: "51,516 FIRs logged; prisons overwhelmed beyond certified capacities.",
+          redacted: "58% of all heroin seized in India in 2025 was seized within or routed via Punjab."
+        },
+        {
+          id: "DRG-07",
+          cat: "drugs",
+          title: "Narcotics Rackets Run from Central Jails (HC Warning)",
+          punjabi: "ਜੇਲ੍ਹਾਂ ਵਿੱਚੋਂ ਚੱਲ ਰਹੇ ਵੱਡੇ ਨਸ਼ਾ ਰੈਕੇਟ — ਹਾਈ ਕੋਰਟ ਦੀ ਸਖ਼ਤ ਚਿਤਾਵਨੀ",
+          desc: "Punjab & Haryana High Court warned: 'Nothing can be more serious than this' after disclosures that kingpins conduct distribution networks directly from Kapurthala, Faridkot, Sangrur, and Hoshiarpur central prisons.",
+          stat: "High Court issued strict directions over prison administrative failure.",
+          redacted: "Contraband, smart devices, and SIM cards routinely recovered during sporadic security sweeps."
+        },
+        {
+          id: "DRG-08",
+          cat: "drugs",
+          title: "Police-Smuggler Nexus: DSP and Drug Inspector Indicted",
+          punjabi: "ਡੀਐਸਪੀ ਅਤੇ ਡਰੱਗ ਇੰਸਪੈਕਟਰ ਨਸ਼ਾ ਤਸਕਰੀ ਵਿੱਚ ਸ਼ਾਮਲ",
+          desc: "Collusion exposed at the highest departmental levels: a DSP indicted for running smuggling operations from Sangrur Jail, and a Fazilka drug inspector linked to an illicit ₹62 crore network.",
+          stat: "₹62 Crore syndicate uncovered in border district Fazilka.",
+          redacted: "Faridkot senior administrative personnel faced bribery charges from smuggling syndicates."
+        },
+        {
+          id: "DRG-09",
+          cat: "drugs",
+          title: "Desperate Distress: 'Our Village is for Sale' Banners",
+          punjabi: "'ਸਾਡਾ ਪਿੰਡ ਵਿਕਾਊ ਹੈ' — ਲੋਕਾਂ ਦਾ ਦਰਦਨਾਕ ਪ੍ਰਦਰਸ਼ਨ",
+          desc: "In Bhai Bhakhtaur village (Bathinda) and Kotkapura (Faridkot), aggrieved citizens hung banners advertising their homes and entire village for sale to escape peddlers.",
+          stat: "Banners displayed publicly in multiple Malwa districts.",
+          redacted: "Villagers alleged local police intimidation against those reporting drug peddlers."
+        }
+      ],
+      law: [
+        {
+          id: "LAW-01",
+          cat: "law",
+          title: "1,40,000+ Crimes & 2,100+ Murders in 3 Years",
+          punjabi: "3 ਸਾਲਾਂ ਵਿੱਚ 1,40,000 ਤੋਂ ਵੱਧ ਅਪਰਾਧ ਅਤੇ 2,100 ਕਤਲ",
+          desc: "Overall crimes escalated from 43,000+ in 2022 to over 47,000+ in 2024, representing an average of 21 violent crimes every single day.",
+          stat: "2,100+ murders registered between 2022 and 2024.",
+          redacted: "Violent offenses spiked from 6,000+ in 2023 to 7,700+ in 2024."
+        },
+        {
+          id: "LAW-02",
+          cat: "law",
+          title: "Rocket-Propelled Grenade (RPG) Strike on Intelligence HQ",
+          punjabi: "ਮੁਹਾਲੀ ਇੰਟੈਲੀਜੈਂਸ ਹੈੱਡਕੁਆਰਟਰ 'ਤੇ ਆਰਪੀਜੀ ਹਮਲਾ",
+          desc: "Attackers fired an RPG warhead into the Punjab Police Intelligence Headquarters in Mohali, exposing catastrophic vulnerabilities in the state security apparatus.",
+          stat: "Direct rocket strike on high-security state intelligence building.",
+          redacted: "Part of 22 coordinated grenade/explosive strikes across Punjab police stations."
+        },
+        {
+          id: "LAW-03",
+          cat: "law",
+          title: "22 Police Stations Attacked with Grenades & Explosives",
+          punjabi: "22 ਥਾਣਿਆਂ 'ਤੇ ਗ੍ਰਨੇਡ ਅਤੇ ਬੰਬ ਹਮਲੇ",
+          desc: "From the Jalalabad police station explosion in September 2026 to repeated grenade tosses in border districts, state stations have turned into vulnerable targets.",
+          stat: "22 police stations targeted under AAP governance.",
+          redacted: "Police personnel inside their own outposts report severe lack of basic blast barriers."
+        },
+        {
+          id: "LAW-04",
+          cat: "law",
+          title: "On-Duty ASI Sukhchain Singh Gunned Down in Amritsar",
+          punjabi: "ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ ਪੁਲਿਸ ਏਐਸਆਈ ਸੁਖਚੈਨ ਸਿੰਘ ਦਾ ਗੋਲੀਆਂ ਮਾਰ ਕੇ ਕਤਲ",
+          desc: "In October 2026, Punjab Police ASI Sukhchain Singh was shot dead by motorcycle-borne assailants while returning home from duty, proving even police officers have no protection.",
+          stat: "Assassination of law enforcement officer in broad daylight.",
+          redacted: "Assailants escaped without interception through heavily surveilled corridor roads."
+        },
+        {
+          id: "LAW-05",
+          cat: "law",
+          title: "Daylight Assassination of Sidhu Moosewala",
+          punjabi: "ਸਿੱਧੂ ਮੂਸੇਵਾਲਾ ਦਾ ਦਿਨ-ਦਿਹਾੜੇ ਬੇਰਹਿਮੀ ਨਾਲ ਕਤਲ",
+          desc: "Global icon and singer Sidhu Moosewala was gunned down in Mansa shortly after the AAP government publicly publicized the pruning of his security detail on social media.",
+          stat: "Over 30 rounds fired from automatic weapons in Jawaharke village.",
+          redacted: "State PR machinery's premature disclosure of pruned security leaked vital operational intel."
+        },
+        {
+          id: "LAW-06",
+          cat: "law",
+          title: "Triple Daylight Murders in 48 Hours in Ludhiana (2026)",
+          punjabi: "ਲੁਧਿਆਣਾ ਵਿੱਚ 48 ਘੰਟਿਆਂ ਵਿੱਚ 3 ਸ਼ਰੇਆਮ ਕਤਲ",
+          desc: "Punjab's industrial capital witnessed three brazen daylight homicides within 48 hours, including the execution of a former sarpanch in broad public view.",
+          stat: "3 murders within 48 hours in a single city commissionerate.",
+          redacted: "Traders shuttered shops in fear as police response was delayed by hours."
+        },
+        {
+          id: "LAW-07",
+          cat: "law",
+          title: "Assassinations of Kabaddi Legends Sandeep Nangal & Gurvinder",
+          punjabi: "ਕਬੱਡੀ ਖਿਡਾਰੀ ਸੰਦੀਪ ਨੰਗਲ ਅੰਬੀਆਂ ਅਤੇ ਗੁਰਵਿੰਦਰ ਸਿੰਘ ਦੇ ਕਤਲ",
+          desc: "International athletes gunned down during live tournaments and public settings by international gangster syndicates operating freely in Punjab.",
+          stat: "Multiple international athletes murdered in targeted gangster hits.",
+          redacted: "Extortion syndicates demanded protection cuts from rural sports federation organizers."
+        },
+        {
+          id: "LAW-08",
+          cat: "law",
+          title: "16,000+ Crimes Against Women (2022–2024)",
+          punjabi: "ਔਰਤਾਂ ਵਿਰੁੱਧ 16,000 ਤੋਂ ਵੱਧ ਅਪਰਾਧ",
+          desc: "Alarming degradation in the security environment for women, with official records documenting over 16,000 crimes against women across the state.",
+          stat: "16,000+ recorded crimes against women in 3 years.",
+          redacted: "Conviction rates remain under 18% due to backlogged forensic reporting."
+        },
+        {
+          id: "LAW-09",
+          cat: "law",
+          title: "Extortion Industry: Abohar & Nakodar Traders Slain",
+          punjabi: "ਵਪਾਰੀਆਂ ਤੋਂ ਜਬਰੀ ਵਸੂਲੀ — ਅਬੋਹਰ ਅਤੇ ਨਕੋਦਰ ਵਿੱਚ ਵਪਾਰੀ ਮਾਰੇ ਗਏ",
+          desc: "Garment trader Bhupinder Singh Chawla shot over a ₹30 lakh ransom demand; businessman Sanjay Verma murdered in Abohar; Nakodar cloth merchant and his bodyguard executed.",
+          stat: "560+ FIRs registered over gangster extortion demands.",
+          redacted: "Dozens of affluent business families relocated headquarters to UP and Uttarakhand."
+        },
+        {
+          id: "LAW-10",
+          cat: "law",
+          title: "Daylight Slaying of AAP Leader Lucky Oberoi & Wedding AK-47 Hit",
+          punjabi: "ਲੱਕੀ ਓਬਰਾਏ ਦਾ ਕਤਲ ਅਤੇ ਵਿਆਹ ਵਿੱਚ ਏਕੇ-47 ਨਾਲ ਸਰਪੰਚ ਦੀ ਹੱਤਿਆ",
+          desc: "AAP leader Lucky Oberoi assassinated outside a Jalandhar gurdwara; AAP sarpanch of Thathian Mehta gunned down with an AK-47 assault rifle during a family wedding.",
+          stat: "AK-47 assault rifles used openly in public social gatherings.",
+          redacted: "Factional rivalry and protection payouts cited in internal intelligence memorandums."
+        }
+      ],
+      vadakhilafi: [
+        {
+          id: "VAD-01",
+          cat: "vadakhilafi",
+          title: "Only 2.45% of Promised 25 Lakh Jobs Delivered",
+          punjabi: "25 ਲੱਖ ਨੌਕਰੀਆਂ ਦੇ ਵਾਅਦੇ ਵਿੱਚੋਂ ਸਿਰਫ਼ 2.45% ਨੌਕਰੀਆਂ ਮਿਲੀਆਂ",
+          desc: "AAP promised 25 lakh employment opportunities. After four years, only 61,281 government positions have been filled. Youth unemployment in Punjab stands at 20.2%.",
+          stat: "61,281 delivered vs 2,500,000 promised (2.45%).",
+          redacted: "Tens of thousands of qualified youth forced to pay unregulated immigration agents to flee abroad."
+        },
+        {
+          id: "VAD-02",
+          cat: "vadakhilafi",
+          title: "Mohalla Clinics Scaled Down by 91% (16,000 → 1,432)",
+          punjabi: "16,000 ਮੁਹੱਲਾ ਕਲੀਨਿਕਾਂ ਦਾ ਵਾਅਦਾ ਘਟਾ ਕੇ 1,432 ਕੀਤਾ",
+          desc: "Flagship healthcare commitment of 16,000 primary clinics was quietly slashed by more than 91% to barely 1,432 clinics across 5 years.",
+          stat: "Target reduced by 91.05% after election victory.",
+          redacted: "Existing rural dispensaries were merely repainted without adding specialized diagnostic equipment."
+        },
+        {
+          id: "VAD-03",
+          cat: "vadakhilafi",
+          title: "Debt Surging to ₹4.47 Lakh Crore by March 2027",
+          punjabi: "ਪੰਜਾਬ ਦਾ ਕਰਜ਼ਾ ਵੱਧ ਕੇ 4.47 ਲੱਖ ਕਰੋੜ ਰੁਪਏ ਤੱਕ ਪਹੁੰਚਿਆ",
+          desc: "Pledged to balance budget and curb debt. Outstanding debt ballooned from ₹2.83 lakh crore in March 2022 to a projected ₹4.47 lakh crore, with debt-to-GSDP worsening beyond 45%.",
+          stat: "Debt-to-GSDP worsened from 41.6% to >45%.",
+          redacted: "State compelled to borrow fresh funds merely to pay interest obligations on prior loans."
+        },
+        {
+          id: "VAD-04",
+          cat: "vadakhilafi",
+          title: "0 MT Moong Procured at MSP: ₹20 Cr Farmer Losses",
+          punjabi: "ਐਮਐਸਪੀ 'ਤੇ ਮੂੰਗੀ ਦੀ ਜ਼ੀਰੋ ਖਰੀਦ — ਕਿਸਾਨਾਂ ਦਾ ਭਾਰੀ ਨੁਕਸਾਨ",
+          desc: "Guaranteed MSP procurement for 22 crops. In 2024, out of 26,966 MT moong arriving at state mandis, not a single metric tonne was bought at MSP; 99.6% was sold at distress prices.",
+          stat: "₹14 to 20 Crore estimated direct financial loss to farmers.",
+          redacted: "Government procurement agencies refused to intervene when private buyers dropped prices."
+        },
+        {
+          id: "VAD-05",
+          cat: "vadakhilafi",
+          title: "Zero of 16 Promised Medical Colleges Established",
+          punjabi: "16 ਮੈਡੀਕਲ ਕਾਲਜਾਂ ਦੇ ਵਾਅਦੇ ਵਿੱਚੋਂ ਇੱਕ ਵੀ ਕਾਲਜ ਚਾਲੂ ਨਹੀਂ",
+          desc: "Pledged 16 world-class medical institutions in 5 years. After four years, the government has failed to make even a single new government medical college fully operational.",
+          stat: "0 of 16 medical colleges functioning.",
+          redacted: "Budget allocations for announced college foundations lapsed without civil construction."
+        },
+        {
+          id: "VAD-06",
+          cat: "vadakhilafi",
+          title: "₹54,000 Cr Mining Revenue Mirage & Continued Sand Mafia",
+          punjabi: "ਮਾਈਨਿੰਗ ਤੋਂ 54,000 ਕਰੋੜ ਦੀ ਕਮਾਈ ਦਾ ਝੂਠ",
+          desc: "Guaranteed ₹54,000 crore annual revenue by eliminating mining graft. Instead, allegations of a ₹400 crore revenue loss from sand and gravel emerged under AAP's tenure.",
+          stat: "₹54,000 Cr promise vs ₹400 Cr reported loss.",
+          redacted: "Enforcement teams routinely recalled following political interference in riverbed zones."
+        },
+        {
+          id: "VAD-07",
+          cat: "vadakhilafi",
+          title: "Anganwadi & ASHA Workers Await Doubled Salaries",
+          punjabi: "ਆਂਗਣਵਾੜੀ ਅਤੇ ਆਸ਼ਾ ਵਰਕਰਾਂ ਦੇ ਮਾਣ-ਭੱਤੇ ਦੁੱਗਣੇ ਕਰਨ ਦਾ ਵਾਅਦਾ ਅਧੂਰਾ",
+          desc: "Pledged to double honorariums and salaries for frontline female health workers. Four years later, workers continue massive demonstrations on state highways.",
+          stat: "Thousands of Anganwadi workers protesting salary stagnation.",
+          redacted: "Police used water cannons and barricades against female workers demonstrating outside ministers' homes."
+        },
+        {
+          id: "VAD-08",
+          cat: "vadakhilafi",
+          title: "Bargari Sacrilege & Firing Justice Unfulfilled",
+          punjabi: "ਬਰਗਾੜੀ ਬੇਅਦਬੀ ਇਨਸਾਫ਼ ਦਾ ਅਣਸੁਲਝਿਆ ਮਾਮਲਾ",
+          desc: "Promised prompt and decisive closure in the 2015 Bargari sacrilege and police firing cases. Victims' families and Sikh panthic organizations continue waiting after 4+ years.",
+          stat: "Over a decade since 2015 incidents without final justice.",
+          redacted: "Special Investigation Team chargesheets remain ensnarled in procedural delays."
+        }
+      ],
+      corruption: [
+        {
+          id: "COR-01",
+          cat: "corruption",
+          title: "CBI Raid on CM Camp Office: OSD Rajbir Singh Ghuman Case",
+          punjabi: "ਮੁੱਖ ਮੰਤਰੀ ਕੈਂਪ ਆਫਿਸ 'ਤੇ ਸੀਬੀਆਈ ਛਾਪਾ — ਓਐਸਡੀ ਰਾਜਬੀਰ ਘੁਮਣ ਮਾਮਲਾ",
+          desc: "Following Punjab & Haryana High Court orders, the CBI raided eight locations including the CM Camp Office in a cash-for-postings and tender-fixing scandal involving CM's OSD.",
+          stat: "8 locations searched by CBI under High Court directions.",
+          redacted: "Court records documented recorded audio tapes negotiating postings for lucrative kickbacks."
+        },
+        {
+          id: "COR-02",
+          cat: "corruption",
+          title: "₹10,000 Crore GMADA Land Auction Rigging Controversy",
+          punjabi: "ਗਮਾਡਾ ਜ਼ਮੀਨ ਨਿਲਾਮੀ ਵਿੱਚ 10,000 ਕਰੋੜ ਦਾ ਘੁਟਾਲਾ",
+          desc: "Allegations of arbitrary suppression of reserve prices during prime urban land auctions in Mohali, causing estimated losses of up to ₹10,000 crore to the state treasury.",
+          stat: "Estimated ₹10,000 Cr loss in state asset realization.",
+          redacted: "Select private consortiums granted exclusive bidding windows without competitive advertisement."
+        },
+        {
+          id: "COR-03",
+          cat: "corruption",
+          title: "₹348 Crore Suntec City & Forged CLU Land Clearances",
+          punjabi: "ਸਨਟੈਕ ਸਿਟੀ ਵਿੱਚ 348 ਕਰੋੜ ਦੇ ਅਪਰਾਧਿਕ ਲੈਣ-ਦੇਣ ਅਤੇ ਜਾਅਲੀ ਸੀਐਲਯੂ",
+          desc: "ED investigations revealed forged landowner consent letters across 108.58 acres to obtain fraudulent Change of Land Use (CLU) clearances, citing ₹348 crore in proceeds of crime.",
+          stat: "₹348 Crore proceeds of crime tagged by ED.",
+          redacted: "Senior town planning officials summoned over fraudulent expedited files."
+        },
+        {
+          id: "COR-04",
+          cat: "corruption",
+          title: "AAP Leader Deepak Singla Arrested in ₹155.21 Cr Bank Fraud",
+          punjabi: "ਆਪ ਆਗੂ ਦੀਪਕ ਸਿੰਗਲਾ 155.21 ਕਰੋੜ ਦੇ ਬੈਂਕ ਧੋਖਾਧੜੀ ਮਾਮਲੇ ਵਿੱਚ ਗ੍ਰਿਫ਼ਤਾਰ",
+          desc: "In May 2026, the Enforcement Directorate arrested prominent AAP leader Deepak Singla under PMLA in a money-laundering case involving fraudulent Letters of Credit.",
+          stat: "₹155.21 Crore bank fraud chargesheet filed.",
+          redacted: "Funds diverted into shell companies and election campaign publicity logistics."
+        },
+        {
+          id: "COR-05",
+          cat: "corruption",
+          title: "₹200 Crore Punjab Liquor Policy Cartelization",
+          punjabi: "ਪੰਜਾਬ ਸ਼ਰਾਬ ਨੀਤੀ ਵਿੱਚ 200 ਕਰੋੜ ਦੀਆਂ ਬੇਨਿਯਮੀਆਂ",
+          desc: "Following the controversial excise template, the wholesale L-1 licence fee was hiked tenfold from ₹25 lakh to ₹5 crore, slashing wholesale licences from 74 down to just 7 favored entities.",
+          stat: "Wholesalers cut from 74 to 7; ₹200 Cr irregularities alleged.",
+          redacted: "Small independent vendors driven out of business by monopolistic liquor syndicates."
+        },
+        {
+          id: "COR-06",
+          cat: "corruption",
+          title: "90,248 Ghost Pensioners: Deceased Kept on Welfare Rolls",
+          punjabi: "90,248 ਮ੍ਰਿਤਕ ਪੈਨਸ਼ਨਰਾਂ ਦੇ ਨਾਂ 'ਤੇ ਕਰੋੜਾਂ ਦਾ ਘਪਲਾ",
+          desc: "Social welfare verification revealed 90,248 deceased persons were kept on the active monthly pension rolls, with ₹23.94 crore subsequently recovered after public exposure.",
+          stat: "90,248 deceased individuals collecting public welfare funds.",
+          redacted: "Intermediaries and local office clerks pocketed direct payments for over two years."
+        },
+        {
+          id: "COR-07",
+          cat: "corruption",
+          title: "₹5 Crore FIR Influence Case & CM Relative Summoned",
+          punjabi: "ਐਫਆਈਆਰ ਰੱਦ ਕਰਾਉਣ ਲਈ 5 ਕਰੋੜ ਦੀ ਰਿਸ਼ਵਤ ਮਾਮਲਾ",
+          desc: "Allegations of demanding ₹4-5 crore to influence or quash a criminal FIR were recorded in judicial court proceedings. ED summoned Amardeep Singh Grewal, CM Mann's brother-in-law.",
+          stat: "Court proceedings recorded ₹5 Crore bribe extortion demand.",
+          redacted: "ED summoned CM's brother-in-law in connection with wider transaction trail."
+        },
+        {
+          id: "COR-08",
+          cat: "corruption",
+          title: "Recruitment Scams: Naib Tehsildar & Pharmacy Officer Exams",
+          punjabi: "ਨਾਇਬ ਤਹਿਸੀਲਦਾਰ ਅਤੇ ਫਾਰਮੇਸੀ ਅਫਸਰ ਭਰਤੀ ਘੁਟਾਲਾ",
+          desc: "Aspirants paid bribes exceeding ₹20 lakh in the Naib Tehsildar exam; 2026 Pharmacy Officer test saw allegations of paper compromises for ₹3.5 to ₹13 lakh per candidate.",
+          stat: "₹20+ Lakh per seat bribes in government competitive exams.",
+          redacted: "Bluetooth devices and compromised test centers identified across Malwa examination halls."
+        },
+        {
+          id: "COR-09",
+          cat: "corruption",
+          title: "144 Luxury Toyota Hilux Procurement & Governor Inquiry",
+          punjabi: "144 ਟੋਇਟਾ ਹਿਲਕਸ ਖਰੀਦ ਵਿੱਚ 14.5 ਕਰੋੜ ਦਾ ਬੋਝ — ਰਾਜਪਾਲ ਵੱਲੋਂ ਜਾਂਚ",
+          desc: "Controversy erupted over spending taxpayers' money on 144 luxury Hilux vehicles, adding a ₹14.5 crore+ burden on the debt-ridden state exchequer, prompting a Governor-directed inquiry.",
+          stat: "₹14.5+ Crore burden on exchequer for VIP vehicle convoys.",
+          redacted: "Purchase prioritized despite hospitals lacking basic life-support ambulances."
+        }
+      ]
+    };
+
+    const allChargesheets = [
+      ...chargesheetData.drugs,
+      ...chargesheetData.law,
+      ...chargesheetData.vadakhilafi,
+      ...chargesheetData.corruption
+    ];
+
+    let currentTab = 'all';
+    let showAllEntries = false;
+
+    // RENDER CHARGESHEET LIST
+    function renderChargesheetList() {
+      const container = document.getElementById('chargesheetList');
+      const searchTerm = document.getElementById('chargesheetSearch').value.toLowerCase().trim();
+
+      const filtered = allChargesheets.filter(item => {
+        const matchesTab = (currentTab === 'all' || item.cat === currentTab);
+        const matchesSearch = !searchTerm || 
+          item.title.toLowerCase().includes(searchTerm) ||
+          item.desc.toLowerCase().includes(searchTerm) ||
+          item.id.toLowerCase().includes(searchTerm) ||
+          (item.punjabi && item.punjabi.includes(searchTerm));
+        return matchesTab && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-charcoal rounded-xl border border-panelBorder text-slate-400 font-mono text-sm">
+            No chargesheet entries matched your search query. Try searching for "CBI", "Drugs", "Jobs", "RPG", or "Faridkot".
+          </div>
+        `;
+        return;
+      }
+
+      const limit = (!showAllEntries && !searchTerm && currentTab === 'all') ? 6 : filtered.length;
+      const displayItems = filtered.slice(0, limit);
+
+      const itemsHtml = displayItems.map(item => {
+        let badgeColor = 'text-crimson bg-crimson/10 border-crimson/30';
+        if (item.cat === 'law') badgeColor = 'text-amberAlert bg-amber-500/10 border-amber-500/30';
+        if (item.cat === 'corruption') badgeColor = 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30';
+        if (item.cat === 'vadakhilafi') badgeColor = 'text-red-400 bg-red-500/10 border-red-500/30';
+
+        return `
+          <div class="p-5 rounded-xl bg-charcoal border border-panelBorder hover:border-slate-600 transition space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs px-2 py-0.5 rounded border ${badgeColor} font-bold">${item.id}</span>
+                <span class="text-xs font-mono text-slate-400 uppercase">${item.cat}</span>
+              </div>
+              <span class="text-xs font-mono text-slate-500">EXHIBIT DOCUMENTED</span>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-display font-bold text-white">${item.title}</h3>
+              ${item.punjabi ? `<p class="text-xs font-mono text-crimson/90 mt-0.5">${item.punjabi}</p>` : ''}
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed">${item.desc}</p>
+
+            <!-- Redacted Line (Click to reveal) -->
+            <div class="p-2.5 rounded-lg bg-obsidian border border-panelBorder/70 text-xs font-mono flex items-start gap-2">
+              <span class="text-crimson font-bold shrink-0">CONFIDENTIAL INTEL:</span>
+              <span class="redacted" onclick="this.classList.toggle('revealed')" title="Click to reveal redacted classified information">
+                ${item.redacted}
+              </span>
+            </div>
+
+            <div class="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-mono border-t border-panelBorder/60">
+              <span class="text-amberAlert font-semibold">⚡ ${item.stat}</span>
+              <button onclick="openDossierModal('${item.cat}')" class="text-crimson hover:text-crimsonBright font-bold flex items-center gap-1">
+                <span>Open Dossier File</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      let expandBtnHtml = '';
+      if (!showAllEntries && !searchTerm && currentTab === 'all' && filtered.length > limit) {
+        expandBtnHtml = `
+          <div class="pt-4 text-center">
+            <button onclick="showAllEntries = true; renderChargesheetList();" class="px-6 py-3 rounded-xl bg-slateDark hover:bg-crimson border border-slate-700 hover:border-crimson text-white font-mono text-xs font-bold uppercase tracking-wider transition shadow-lg inline-flex items-center gap-2">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              <span>Load All 54 Chargesheet Entries (${filtered.length - limit} More)</span>
+            </button>
+          </div>
+        `;
+      } else if (showAllEntries && !searchTerm && currentTab === 'all') {
+        expandBtnHtml = `
+          <div class="pt-4 text-center">
+            <button onclick="showAllEntries = false; renderChargesheetList();" class="px-5 py-2.5 rounded-xl bg-slateDark hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white font-mono text-xs transition inline-flex items-center gap-1.5">
+              <i data-lucide="chevron-up" class="w-4 h-4"></i>
+              <span>Collapse to Key 6 Entries</span>
+            </button>
+          </div>
+        `;
+      }
+
+      container.innerHTML = itemsHtml + expandBtnHtml;
+      lucide.createIcons();
+    }
+
+    function setChargesheetTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.cs-tab').forEach(b => {
+        if (b.dataset.tab === tab) {
+          b.className = 'cs-tab px-3.5 py-1.5 rounded-md bg-crimson text-white font-bold transition';
+        } else {
+          b.className = 'cs-tab px-3.5 py-1.5 rounded-md bg-slateDark text-slate-300 hover:text-white transition';
+        }
+      });
+      renderChargesheetList();
+    }
+
+    function searchChargesheet() {
+      renderChargesheetList();
+    }
+
+    // --- 5. 3D DOSSIER MODAL WITH FOLDER EFFECT ---
+    function openDossierModal(category) {
+      const modal = document.getElementById('dossierModal');
+      const tag = document.getElementById('modalDossierTag');
+      const title = document.getElementById('modalTitle');
+      const sub = document.getElementById('modalSubtitle');
+      const stat = document.getElementById('modalStat');
+      const entries = document.getElementById('modalEntries');
+
+      const data = chargesheetData[category] || chargesheetData.drugs;
+
+      if (category === 'drugs') {
+        tag.innerText = 'DOSSIER 01: NARCOTICS REPOSITORY';
+        title.innerText = 'The Chitta Epidemic & Official Collusion';
+        sub.innerText = 'CASE REF: PB-NDPS-2022-26 // 51,516 REGISTERED FIRS';
+        stat.innerText = '58% of India Heroin in Punjab';
+      } else if (category === 'law') {
+        tag.innerText = 'DOSSIER 02: LAW & ORDER AUDIT';
+        title.innerText = 'Organised Gangsters & Extortion Syndicates';
+        sub.innerText = 'CASE REF: PB-LAW-2022-26 // 1,40,000+ TOTAL CRIMES';
+        stat.innerText = '22 Police Stations Attacked';
+      } else if (category === 'vadakhilafi') {
+        tag.innerText = 'DOSSIER 03: VADAKHILAFI AUDIT';
+        title.innerText = 'Guarantees Betrayed: The 25 Lakh Jobs Myth';
+        sub.innerText = 'CASE REF: PB-PROMISE-FAIL // 2.45% ACTUAL DELIVERY';
+        stat.innerText = 'Debt Reaching ₹4.47 Lakh Cr';
+      } else if (category === 'corruption') {
+        tag.innerText = 'DOSSIER 04: SCAMS & RAIDS';
+        title.innerText = 'Institutional Graft & Central Agency Probes';
+        sub.innerText = 'CASE REF: PB-SCAM-ED-CBI // ₹10,000 CR LAND AUCTION';
+        stat.innerText = 'CM Camp Office CBI Search';
+      }
+
+      entries.innerHTML = data.map((item, idx) => `
+        <div class="p-4 rounded-xl bg-obsidian border border-panelBorder space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-crimson font-bold">${item.id} — COUNT #${idx + 1}</span>
+            <span class="text-slate-400 font-semibold">${item.stat}</span>
+          </div>
+          <h5 class="text-base font-bold text-white">${item.title}</h5>
+          <p class="text-xs text-slate-300 leading-relaxed">${item.desc}</p>
+          <div class="text-[11px] font-mono text-slate-400 border-l border-crimson pl-2">
+            <span class="text-slate-500">DEPUTY INQUIRY EXHIBIT:</span> ${item.redacted}
+          </div>
+        </div>
+      `).join('');
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeDossierModal() {
+      const modal = document.getElementById('dossierModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // --- 6. TACTICAL MAP INCIDENTS DATA ---
+    const mapIncidents = {
+      mohali: {
+        district: "SAS Nagar / Mohali",
+        date: "TACTICAL WARHEAD STRIKE",
+        badge: "TERROR & SECURITY COLLAPSE",
+        title: "RPG Attack on Punjab Police Intelligence HQ",
+        target: "State Intelligence Headquarters, Sector 77",
+        weapon: "Rocket-Propelled Grenade (RPG)",
+        severity: "Unprecedented State Intelligence Breach",
+        desc: "Assailants fired a Rocket-Propelled Grenade directly at the high-security Punjab Police Intelligence Headquarters in Mohali. This attack is part of an alarming trend where 22 police stations and establishments have suffered grenade and blast attacks under the current government.",
+        quote: "Direct hit on the very brain of state police intelligence operations while senior officials were on site."
+      },
+      amritsar: {
+        district: "Amritsar Police Commissionerate",
+        date: "OCTOBER 2026",
+        badge: "ON-DUTY ASSASSINATION",
+        title: "Police ASI Sukhchain Singh Gunned Down",
+        target: "Punjab Police On-Duty Personnel",
+        weapon: "Pistol Firearms (Close Range)",
+        severity: "Lethal Danger to Uniformed Officers",
+        desc: "Motorcycle-borne assailants executed ASI Sukhchain Singh while he was returning home after duty. When the state cannot even guarantee the safety of its own uniformed police personnel, common citizens are left entirely helpless.",
+        quote: "A government that cannot protect its own police cannot protect Punjab."
+      },
+      ludhiana: {
+        district: "Ludhiana Industrial Hub",
+        date: "2026 REPEATED ATTACKS",
+        badge: "TRIPLE HOMICIDE IN 48 HOURS",
+        title: "Three Brazen Daylight Murders in 48 Hours",
+        target: "Civic Leaders, Former Sarpanches, Businessmen",
+        weapon: "Unregulated Firearms & Sharp Weapons",
+        severity: "Total Breakdown in Street Deterrence",
+        desc: "Ludhiana witnessed three broad daylight homicides in a mere 48-hour span, including the fatal shooting of a former village sarpanch. Gang rivalries and contract killers operated in open commercial corridors without police intervention.",
+        quote: "Over 2,100 murders logged across Punjab between 2022 and 2024."
+      },
+      bathinda: {
+        district: "Bathinda (Malwa Region)",
+        date: "PUBLIC PROTEST ACTION",
+        badge: "VILLAGE DISTRESS SIGNAL",
+        title: "Bhai Bhakhtaur: 'Our Village is for Sale'",
+        target: "Rural Community Youth & Families",
+        weapon: "Chitta (Heroin) & Synthetic Opioids",
+        severity: "Community Rebellion Against Police Inaction",
+        desc: "Frustrated by openly operating drug dens and unresponsive police precincts, residents of Bhai Bhakhtaur village put up banners reading 'Our village is for sale' as a desperate cry for government accountability.",
+        quote: "Villagers chose to put their homes up for sale rather than bury more sons."
+      },
+      faridkot: {
+        district: "Faridkot & Kotkapura",
+        date: "PRISON & CIVIC CRISIS",
+        badge: "JAIL DRUG RING & RESIDENCE BANNERS",
+        title: "Faridkot Jail Ring & 'Houses for Sale' in Kotkapura",
+        target: "High Court Monitored Penitentiary Facility",
+        weapon: "Smuggled Narcotics, Mobile Phones & Contraband",
+        severity: "Bribery & Official Corruption in Detention",
+        desc: "Faridkot Central Jail was identified by the High Court as an operational nerve center for cross-state narcotics syndicates. Concurrently, Kotkapura families put up signs declaring their houses for sale to escape street gangs.",
+        quote: "High Court: 'Nothing can be more serious than drug rings run from within state prisons.'"
+      },
+      fazilka: {
+        district: "Fazilka & Jalalabad",
+        date: "SEPTEMBER 2026",
+        badge: "POLICE STATION BLAST & ₹62 CR SYNDICATE",
+        title: "Jalalabad Police Station Explosion & ₹62 Cr Drug Inspector",
+        target: "Jalalabad Police Station & Border Supply Lines",
+        weapon: "Improvised Explosive Device (IED) & Heroin Pipeline",
+        severity: "Subversion of Border District Law Enforcement",
+        desc: "A blast inside the Jalalabad police station exposed deep operational vulnerability. Concurrently, a local drug inspector in Fazilka was indicted for facilitating an illicit ₹62 crore narcotics network across border conduits.",
+        quote: "Blast inside the police station proves terrorists strike with absolute impunity."
+      },
+      sangrur: {
+        district: "Sangrur Central Jail",
+        date: "JUDICIAL PROBE",
+        badge: "SENIOR POLICE COLLUSION",
+        title: "DSP Running Smuggling Racket from Sangrur Jail",
+        target: "Sangrur Central Jail Confinement Ward",
+        weapon: "Heroin Supply Network & Smart Terminals",
+        severity: "High-Ranking Departmental Treachery",
+        desc: "Investigations revealed a serving Deputy Superintendent of Police (DSP) operating an active smuggling and extortion racket directly from Sangrur Central Jail, supplying illicit drugs to prisoners.",
+        quote: "When guardians of law become syndicate bosses, public safety is abolished."
+      },
+      jalandhar: {
+        district: "Jalandhar & Nakodar",
+        date: "TARGETED EXTORTION KILLINGS",
+        badge: "MURDER OF AAP LEADER & MERCHANTS",
+        title: "Lucky Oberoi Murder & Nakodar Double Slaying",
+        target: "Traders, Political Workers & Bodyguards",
+        weapon: "Point-Blank Pistol Shootings",
+        severity: "Widespread Capital Flight of Traders",
+        desc: "AAP leader Lucky Oberoi executed outside a gurdwara in Jalandhar. Nakodar cloth merchant and his police bodyguard gunned down over refusal to pay extortion ransom, forcing traders to shift investments to UP.",
+        quote: "Businessmen pay monthly protection money to save their children's lives."
+      },
+      mansa: {
+        district: "Mansa / Jawaharke Village",
+        date: "MAY 2022",
+        badge: "INTERNATIONAL GANG EXECUTION",
+        title: "Assassination of Sidhu Moosewala",
+        target: "Shubhdeep Singh Sidhu (Global Icon)",
+        weapon: "AN-94 & Automatic Assault Rifles",
+        severity: "State Leaked Pruned Security Detail 24h Prior",
+        desc: "Sidhu Moosewala was ambushed and killed with over 30 bullets in Jawaharke. Just hours earlier, the AAP administration publicly bragged on social media about trimming his security cover, handing assassins the exact window they needed.",
+        quote: "Publicity-obsessed governance cost Punjab its most renowned cultural icon."
+      }
+    };
+
+    function selectIncident(id) {
+      const data = mapIncidents[id];
+      if (!data) return;
+
+      document.getElementById('incidentBadge').innerText = data.badge;
+      document.getElementById('incidentDate').innerText = data.date;
+      document.getElementById('incidentDistrict').innerText = data.district;
+      document.getElementById('incidentTitle').innerText = data.title;
+      document.getElementById('incidentTarget').innerText = data.target;
+      document.getElementById('incidentWeapon').innerText = data.weapon;
+      document.getElementById('incidentSeverity').innerText = data.severity;
+      document.getElementById('incidentDesc').innerText = data.desc;
+      document.getElementById('incidentQuote').innerText = `"${data.quote}"`;
+
+      lucide.createIcons();
+    }
+
+    function filterMapHotspots(category) {
+      document.querySelectorAll('.map-filter-btn').forEach(btn => {
+        if (btn.dataset.cat === category) {
+          btn.className = 'map-filter-btn px-2.5 py-1 rounded bg-crimson text-white font-bold';
+        } else {
+          btn.className = 'map-filter-btn px-2.5 py-1 rounded bg-slateDark text-slate-300 hover:text-white';
+        }
+      });
+
+      document.querySelectorAll('.hotspot-pin').forEach(pin => {
+        if (category === 'all' || pin.dataset.cat === category) {
+          pin.style.display = 'block';
+        } else {
+          pin.style.display = 'none';
+        }
+      });
+    }
+
+    // --- 7. EVIDENCE EXHIBITS INSPECTOR ---
+    const evidenceExhibits = {
+      'ev-hc': {
+        tag: 'JUDICIAL REPORT // PB-HC-CR-2024',
+        title: 'High Court Reprimand: Narcotics Cartels in State Prisons',
+        sub: 'JURISDICTION: DIVISION BENCH, HIGH COURT CHANDIGARH',
+        body: `EXCERPT FROM OFFICIAL HIGH COURT PROCEEDINGS:
+"Nothing can be more serious than this. It is unconscionable that inmates lodged in high-security central jails in Sangrur, Kapurthala, and Faridkot continue to command multi-crore narcotics networks, access smartphones, and coordinate illicit trade with impunity.
+
+The state prison administration has fundamentally collapsed in preventing contraband infiltration. Immediate independent inquiries and forensic sweeps are directed to seize SIM cards and fix administrative accountability upon senior jail superintendents."`
+      },
+      'ev-cbi': {
+        tag: 'INVESTIGATIVE DISPATCH // CBI-PB-CAMP-08',
+        title: 'CBI Raids CM Camp Office in Cash-for-Postings Probe',
+        sub: 'DIRECTED BY: PUNJAB & HARYANA HIGH COURT',
+        body: `JUDICIAL DIRECTIVE EXCERPT:
+"Pursuant to prima facie material demonstrating cash-for-postings transactions and manipulation of state executive tenders, the Central Bureau of Investigation (CBI) conducted search and seizure operations across eight designated premises, including the Camp Office of the Chief Minister in Punjab.
+
+Seized materials, mobile transcripts, and register entries concerning OSD Rajbir Singh Ghuman were deposited under sealed cover before the Registrar General."`
+      }
+    };
+
+    function viewEvidenceDetail(key) {
+      const doc = evidenceExhibits[key];
+      if (!doc) return;
+
+      document.getElementById('evDocTag').innerText = doc.tag;
+      document.getElementById('evDocTitle').innerText = doc.title;
+      document.getElementById('evDocSub').innerText = doc.sub;
+      document.getElementById('evDocBody').innerText = doc.body;
+
+      const modal = document.getElementById('evidenceModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeEvidenceModal() {
+      const modal = document.getElementById('evidenceModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function filterEvidenceType(type) {
+      document.querySelectorAll('.ev-filter-btn').forEach(btn => {
+        if (btn.dataset.ev === type) {
+          btn.className = 'ev-filter-btn px-3 py-1.5 rounded-lg bg-crimson text-white font-bold transition';
+        } else {
+          btn.className = 'ev-filter-btn px-3 py-1.5 rounded-lg bg-slateDark text-slate-300 hover:text-white transition';
+        }
+      });
+
+      const cards = document.querySelectorAll('#mediaClippingsGrid .news-cutout');
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        if (type === 'all' || cat === type) {
+          card.style.display = 'block';
+          if (typeof gsap !== 'undefined') {
+            gsap.fromTo(card, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.35 });
+          }
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      const legalBox = document.getElementById('legalChargesheetBox');
+      if (legalBox) {
+        if (type === 'all' || type === 'chargesheet') {
+          legalBox.style.display = 'block';
+        } else {
+          legalBox.style.display = 'none';
+        }
+      }
+    }
+
+    // Mobile / Tablet Navigation Drawer Toggle
+    let isMobileNavOpen = false;
+    function toggleMobileNav() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const icon = document.getElementById('mobileMenuIcon');
+      isMobileNavOpen = !isMobileNavOpen;
+      if (isMobileNavOpen) {
+        drawer.classList.remove('hidden');
+        if (icon) icon.setAttribute('data-lucide', 'x');
+      } else {
+        drawer.classList.add('hidden');
+        if (icon) icon.setAttribute('data-lucide', 'menu');
+      }
+      lucide.createIcons();
+    }
+
+    // Cinematic Preloader Dismissal
+    function dismissPreloader() {
+      const preloader = document.getElementById('investigativePreloader');
+      if (!preloader) return;
+      if (typeof gsap !== 'undefined') {
+        gsap.to(preloader, {
+          y: '-100%',
+          opacity: 0,
+          duration: 0.7,
+          ease: 'power3.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+          }
+        });
+      } else {
+        preloader.style.display = 'none';
+      }
+    }
+
+    // Auto-advance preloader after brief delay
+    setTimeout(() => {
+      dismissPreloader();
+    }, 1400);
+
+    // Live State Debt Clock Ticker
+    let currentDebtValue = 447189.42;
+    setInterval(() => {
+      currentDebtValue += 0.0847;
+      const el = document.getElementById('liveDebtDisplay');
+      if (el) {
+        el.innerText = '₹' + currentDebtValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Cr';
+      }
+    }, 100);
+
+    // Copy Tracking Token to Clipboard
+    function copyTrackingToken() {
+      const token = document.getElementById('successToken').innerText;
+      navigator.clipboard.writeText(token);
+      const btn = document.getElementById('copyTokenBtn');
+      if (btn) {
+        btn.innerText = 'COPIED!';
+        setTimeout(() => { btn.innerText = 'COPY'; }, 2000);
+      }
+    }
+
+    // --- 8. "SUBMIT YOUR STORY" CITIZEN DRAG & DROP & DISPATCH ENGINE ---
+    let selectedFiles = [];
+
+    function toggleAnonMode(isAnon) {
+      const fields = document.getElementById('authorFields');
+      if (isAnon) {
+        fields.classList.add('hidden');
+      } else {
+        fields.classList.remove('hidden');
+      }
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('dropzone').classList.add('dropzone-active');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('dropzone').classList.remove('dropzone-active');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('dropzone').classList.remove('dropzone-active');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processFiles(e.dataTransfer.files);
+      }
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files && e.target.files.length > 0) {
+        processFiles(e.target.files);
+      }
+    }
+
+    function processFiles(files) {
+      const preview = document.getElementById('filePreviewContainer');
+      preview.classList.remove('hidden');
+      for (let i = 0; i < files.length; i++) {
+        selectedFiles.push(files[i]);
+      }
+      renderFilePreviews();
+    }
+
+    function renderFilePreviews() {
+      const preview = document.getElementById('filePreviewContainer');
+      preview.innerHTML = selectedFiles.map((file, idx) => `
+        <div class="flex items-center justify-between p-2 rounded bg-obsidian border border-panelBorder text-[11px] font-mono text-slate-300">
+          <div class="flex items-center gap-2 truncate">
+            <i data-lucide="file" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+            <span class="truncate">${file.name}</span>
+            <span class="text-slate-500">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+          </div>
+          <button type="button" onclick="removeFile(${idx})" class="text-slate-500 hover:text-red-400 p-0.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function removeFile(idx) {
+      selectedFiles.splice(idx, 1);
+      renderFilePreviews();
+      if (selectedFiles.length === 0) {
+        document.getElementById('filePreviewContainer').classList.add('hidden');
+      }
+    }
+
+    function handleCitizenSubmission(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span> Encrypting &amp; Transmitting...`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Transmit Whistleblower Report`;
+        btn.disabled = false;
+
+        const token = 'PB-WHISTLE-2026-' + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('successToken').innerText = token;
+
+        // Reset form
+        e.target.reset();
+        selectedFiles = [];
+        document.getElementById('filePreviewContainer').classList.add('hidden');
+
+        // Confetti celebration
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 80,
+            spread: 75,
+            origin: { y: 0.6 },
+            colors: ['#06b6d4', '#e11d48', '#ffffff']
+          });
+        }
+
+        // Show success modal
+        const modal = document.getElementById('submissionSuccessModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        lucide.createIcons();
+      }, 1000);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('submissionSuccessModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // --- 9. LIGHTBOX VIEWER ---
+    function openImageLightbox(src, caption) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxCaption').innerText = caption || 'Document Exhibit';
+      const modal = document.getElementById('imageLightbox');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('imageLightbox');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function downloadChargesheetPDF() {
+      alert("[CHARGESHEET ARCHIVE DOWNLOAD READY]\n\nDocument: Complete_AAP_Paap_Patra_Chargesheet.pdf\nStatus: Official Verified Legal Indictment\n\nClicking OK will launch the print / PDF save dialog.");
+      window.print();
+    }
+
+    function shareChargesheet() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'AAP Da Paap Patra — Digital Investigative Chargesheet',
+          text: 'Official chargesheet documenting 4 years of governance failure and corruption in Punjab. Explore the dossiers:',
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert("Link copied to clipboard! Share on WhatsApp, X or Telegram.");
+        });
+      }
+    }
+
+    // --- 10. REDACTION TOGGLE ---
+    let isDeclassified = false;
+    function toggleDeclassify() {
+      isDeclassified = !isDeclassified;
+      const body = document.body;
+      const text = document.getElementById('declassifyText');
+      if (isDeclassified) {
+        body.classList.add('declassified');
+        text.innerText = 'Redact';
+      } else {
+        body.classList.remove('declassified');
+        text.innerText = 'Declassify';
+      }
+    }
+
+    // --- 11. MULTILINGUAL SUPPORT ---
+    const langStrings = {
+      en: {
+        tickerLabel: 'INVESTIGATIVE CHARGESHEET ARCHIVE // DOSSIER REF: PB-2022-2026',
+        heroTagline: '“ਵਾਅਦਿਆਂ ਤੋਂ ਹਕੀਕਤ ਤੱਕ” — From Promises to Reality',
+        heroDesc: 'A digital investigative chargesheet documenting four years of administrative collapse, catastrophic drug overdose deaths, unfulfilled public guarantees, extortion syndicates, and institutional corruption under the AAP government in Punjab.',
+        exploreBtn: 'Explore 4 Dossiers',
+        trackerBtn: '3D Crime Tracker'
+      },
+      pa: {
+        tickerLabel: 'ਅਧਿਕਾਰਤ ਜਾਂਚ ਦੋਸ਼ ਪੱਤਰ ਆਰਕਾਈਵ // ਰੈਫ: PB-2022-2026',
+        heroTagline: '“ਵਾਅਦਿਆਂ ਤੋਂ ਹਕੀਕਤ ਤੱਕ” — ਚਾਰ ਸਾਲਾਂ ਦਾ ਕਾਲਾ ਚਿੱਠਾ',
+        heroDesc: 'ਪੰਜਾਬ ਵਿੱਚ ਆਮ ਆਦਮੀ ਪਾਰਟੀ ਸਰਕਾਰ ਦੇ ਚਾਰ ਸਾਲਾਂ ਦੇ ਪ੍ਰਸ਼ਾਸਨਿਕ ਪਤਨ, ਜਾਨਲੇਵਾ ਨਸ਼ਾ ਮਹਾਂਮਾਰੀ, ਝੂਠੇ ਵਾਅਦਿਆਂ, ਗੈਂਗਸਟਰ ਰਾਜ, ਪੁਲਿਸ ਥਾਣਿਆਂ \'ਤੇ ਆਰਪੀਜੀ ਹਮਲਿਆਂ ਅਤੇ ਸੰਸਥਾਗਤ ਭ੍ਰਿਸ਼ਟਾਚਾਰ ਦਾ ਅਧਿਕਾਰਤ ਜਾਂਚ ਦਸਤਾਵੇਜ਼।',
+        exploreBtn: '4 ਮੁੱਖ ਦਸਤਾਵੇਜ਼ ਦੇਖੋ',
+        trackerBtn: '3D ਕ੍ਰਾਈਮ ਟਰੈਕਰ'
+      },
+      hi: {
+        tickerLabel: 'जांच आरोप-पत्र पुरालेख // संदर्भ: PB-2022-2026',
+        heroTagline: '“वादों से हकीकत तक” — डिजिटल जांच आरोप-पत्र',
+        heroDesc: 'पंजाब में आम आदमी पार्टी सरकार के चार वर्षों के प्रशासनिक पतन, जानलेवा नशे के प्रकोप, वादाखिलाफी, रंगदारी, थानों पर आरपीजी हमलों और संस्थागत भ्रष्टाचार का विस्तृत सार्वजनिक आरोप-पत्र।',
+        exploreBtn: '4 मुख्य फाइलें देखें',
+        trackerBtn: '3D अपराध ट्रैकर'
+      }
+    };
+
+    function setLanguage(lang) {
+      ['en', 'pa', 'hi'].forEach(l => {
+        const btn = document.getElementById(`lang-${l}`);
+        if (l === lang) {
+          btn.className = 'px-2 py-1 rounded bg-crimson text-white font-bold transition';
+        } else {
+          btn.className = 'px-2 py-1 rounded text-slate-400 hover:text-white transition';
+        }
+      });
+
+      const s = langStrings[lang] || langStrings.en;
+      document.querySelector('[data-i18n="tickerLabel"]').innerText = s.tickerLabel;
+      document.querySelector('[data-i18n="heroTagline"]').innerText = s.heroTagline;
+      document.querySelector('[data-i18n="heroDesc"]').innerText = s.heroDesc;
+      document.querySelector('[data-i18n="exploreBtn"]').innerText = s.exploreBtn;
+      document.querySelector('[data-i18n="trackerBtn"]').innerText = s.trackerBtn;
+    }
+
+    // --- 12. GSAP SCROLLTRIGGER MOTION ANIMATIONS ---
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderChargesheetList();
+      selectIncident('mohali');
+
+      if (typeof gsap !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Entrance
+        gsap.from('#home h1', {
+          y: 40,
+          opacity: 0,
+          duration: 1.1,
+          ease: 'power3.out'
+        });
+
+        gsap.from('#home .counter', {
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          delay: 0.35,
+          ease: 'back.out(1.7)'
+        });
+
+        // Scroll Animations for Section Titles
+        gsap.utils.toArray('section h2').forEach(heading => {
+          gsap.from(heading, {
+            scrollTrigger: {
+              trigger: heading,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
+            },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power2.out'
+          });
+        });
+
+        // 3D Map Plane Tilt on Scroll
+        gsap.from('.map-3d-plane', {
+          scrollTrigger: {
+            trigger: '#crime-map',
+            start: 'top 75%',
+            scrub: 1
+          },
+          rotateX: 32,
+          scale: 0.96
+        });
+
+        // Promise vs Reality Progress Bars
+        gsap.utils.toArray('#promise-vs-reality .bg-crimson').forEach(bar => {
+          gsap.from(bar, {
+            scrollTrigger: {
+              trigger: bar,
+              start: 'top 90%'
+            },
+            width: '0%',
+            duration: 1.4,
+            ease: 'power3.out'
+          });
+        });
+      }
+    });
+
+    // Keyboard ESC closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDossierModal();
+        closeEvidenceModal();
+        closeLightbox();
+        closeSuccessModal();
+      }
+    });
+  </script>
+</body>
+</html>
